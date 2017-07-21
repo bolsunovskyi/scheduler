@@ -1,7 +1,35 @@
 {{ define "user/index.html" }}{{ template "header" }}
-    <div>
-        Main content
-        {{.stuff}}
+{{ template "anon_navbar" }}
+<div class="container">
+    <div class="col-lg-offset-3">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>SignIn</h2>
+                </div>
+                <div class="panel-body">
+                    {{if .error}}
+                    <div class="alert alert-danger">
+                        {{.error}}
+                    </div>
+                    {{end}}
+                    <form method="post">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input name="email" type="email" id="email" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary form-control" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 {{ template "footer" }}
 {{end}}
