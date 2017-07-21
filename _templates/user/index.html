@@ -1,7 +1,7 @@
-<%~ "layout.html" %>
-
-<%@ body { %>
-
-<h1>User</h1>
-
-<% } %>
+{{ define "user/index.html" }}{{ template "header" }}
+    <div>
+        Main content
+        {{.stuff}}
+    </div>
+{{ template "footer" }}
+{{end}}

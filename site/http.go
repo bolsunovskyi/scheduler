@@ -8,6 +8,7 @@ import (
 
 func InitHTTP(r *gin.Engine) {
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{})
+
+		c.HTML(http.StatusOK, "site/index.html", gin.H{})
 	})
 }
