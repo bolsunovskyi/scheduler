@@ -1,5 +1,8 @@
 ## default config
 
+plugins = ["ssh"]
+default_build_path = "/tmp/"
+
 [db]
 host = "localhost"
 port = 5432
@@ -10,3 +13,4 @@ user = "postgres"
 [admin]
 email = "admin@localhost.com"
 password = "123456"
+

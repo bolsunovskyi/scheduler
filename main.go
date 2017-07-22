@@ -7,6 +7,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/bolsunovskyi/scheduler/jobs"
+	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/bolsunovskyi/scheduler/user"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -35,8 +36,10 @@ type admin struct {
 }
 
 type config struct {
-	DB    database
-	Admin admin
+	DB               database
+	Admin            admin
+	Plugins          []string
+	DefaultBuildPath string
 }
 
 func init() {
@@ -78,7 +81,12 @@ func main() {
 
 	user.InitAdmin(db, conf.Admin.Email, conf.Admin.Password)
 	user.InitHTTP(router, db)
-	jobs.InitHTTP(router, db)
+
+	auth := router.Group("/a")
+	auth.Use(user.AbortUnAuth())
+
+	jobs.InitHTTP(auth, db)
+	plugins.Load(conf.Plugins)
 
 	log.Printf("HTTP server started on port %d\n", port)
 	router.Run(fmt.Sprintf(":%d", port))

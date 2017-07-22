@@ -1,7 +1,29 @@
 {{ define "jobs/index.html" }}{{ template "header" }}
 {{ template "navbar" }}
 
-<h1>JOBS</h1>
+<div class="container-fluid">
+    <div class="col-lg-2">
+        <ul class="nav nav-stacked">
+            <li role="presentation"><a href="/a/jobs/create">New Job</a></li>
+            <li role="presentation"><a href="#">People</a></li>
+            <li role="presentation"><a href="#">Manage Scheduler</a></li>
+        </ul>
+
+        <!--<ul class="list-group">-->
+            <!--<li class="list-group-item"><a href="#">New Job</a></li>-->
+            <!--<li class="list-group-item"><a href="#">People</a></li>-->
+            <!--<li class="list-group-item"><a href="#">Manage Scheduler</a></li>-->
+        <!--</ul>-->
+    </div>
+
+    <div class="col-lg-10">
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a href="#">All</a></li>
+            <li role="presentation"><a href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
+            <!--<li role="presentation"><a href="#">Messages</a></li>-->
+        </ul>
+    </div>
+</div>
 
 {{ template "footer" }}
 {{end}}

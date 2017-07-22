@@ -43,7 +43,8 @@ func Middleware(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		s.CreatedAt = time.Now()
+		s.UpdatedAt = time.Now()
+		s.IP = c.Request.RemoteAddr
 		if err := db.Save(s).Error; err != nil {
 			log.Println(err)
 			return

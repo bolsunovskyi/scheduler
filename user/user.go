@@ -12,6 +12,7 @@ type Model struct {
 	LastName  string
 	Email     string
 	Password  string
+	Role      string `gorm:"column:user_role"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -50,6 +51,7 @@ func InitAdmin(db *gorm.DB, email, password string) error {
 			Email:     email,
 			UpdatedAt: time.Now(),
 			CreatedAt: time.Now(),
+			Role:      "admin",
 		}).Error
 	}
 
