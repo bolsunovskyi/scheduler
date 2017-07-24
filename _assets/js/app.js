@@ -15579,9 +15579,11 @@ angular.module('app', [
     'ui.bootstrap',
     'angular-loading-bar'
 ]);
-angular.module('app').controller('job', [
+angular.module('app')
+    .controller('job', [
     '$scope',
-    function ($scope) {
+    'job',
+    function ($scope, jobService) {
 
         $scope.removeParam = function(p){
             for (var i=0;i<$scope.params.length;i++) {
@@ -15592,8 +15594,18 @@ angular.module('app').controller('job', [
             }
         };
 
+        $scope.removeBuildStep = function(s) {
+            for (var i=0;i<$scope.buildSteps.length;i++) {
+                if ($scope.buildSteps[i] == s) {
+                    $scope.buildSteps.splice(i, 1);
+                    break;
+                }
+            }
+        };
+
         $scope.parametrized = false;
         $scope.params = [];
+        $scope.buildSteps = [];
 
         $scope.addChoiceParam = function(){
             $scope.params.push({
@@ -15611,6 +15623,25 @@ angular.module('app').controller('job', [
             return false;
         };
 
+        $scope.loadPluginSchema = function (pluginName, pluginDescription) {
+            jobService.pluginSchema({name: pluginName}, function(data){
+                $scope.buildSteps.push({
+                    name: pluginName,
+                    description: pluginDescription,
+                    schema: data
+                });
+            });
+        }
+
 
     }
-]);
+])
+    .factory('job', function($resource) {
+        return $resource('/a/jobs', {}, {
+            pluginSchema: {
+                method: 'GET',
+                url: '/a/jobs/plugins/schema',
+                isArray: true
+            }
+        })
+    });

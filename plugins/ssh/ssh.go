@@ -4,6 +4,8 @@ import (
 	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"log"
+	"strconv"
 )
 
 type SSH struct {
@@ -11,7 +13,7 @@ type SSH struct {
 	db     *gorm.DB
 }
 
-func MakePlugin(params map[string]interface{}) plugins.JobStep {
+func MakePlugin(params map[string]interface{}) plugins.Item {
 	ssh := SSH{
 		router: params["router"].(*gin.RouterGroup),
 		db:     params["db"].(*gorm.DB),
@@ -35,11 +37,40 @@ func (SSH) GetVersion() string {
 	return "1.0"
 }
 
-func (SSH) GetBuildParams() []plugins.StepParam {
-	return []plugins.StepParam{
+func (s SSH) GetBuildParams() []plugins.ItemParam {
+	var servers []Server
+	if err := s.db.Find(&servers).Error; err != nil {
+		log.Println(err)
+	}
+	var paramOptions []plugins.ParamOptions
+	for _, s := range servers {
+		paramOptions = append(paramOptions, plugins.ParamOptions{
+			Name:  s.Name,
+			Value: strconv.Itoa(s.ID),
+		})
+	}
+
+	return []plugins.ItemParam{
 		{
-			Name: "Command",
-			Type: plugins.TypeString,
+			Name:    "server",
+			Label:   "Server",
+			Type:    plugins.TypeSelect,
+			Options: paramOptions,
+		},
+		{
+			Name:  "files",
+			Label: "Files to send",
+			Type:  plugins.TypeString,
+		},
+		{
+			Name:  "remote_dir",
+			Label: "Remote directory",
+			Type:  plugins.TypeString,
+		},
+		{
+			Name:  "command",
+			Label: "Command",
+			Type:  plugins.TypeText,
 		},
 	}
 }

@@ -78,8 +78,6 @@ func main() {
 	router.Use(gin.Logger(), gin.Recovery(), user.Middleware(db))
 
 	router.Static("/assets", "./_assets")
-	//router.LoadHTMLGlob("_templates/**/*")
-	//router.SetHTMLTemplate()
 	tpl := template.New("app")
 	if _, err := tpl.ParseGlob("_templates/**/*"); err != nil {
 		log.Fatalln(err)
@@ -91,9 +89,10 @@ func main() {
 	auth := router.Group("/a")
 	auth.Use(user.AbortUnAuth())
 
-	jobs.InitHTTP(auth, db)
-	plugins.Load(db, tpl, auth.Group("/plugins"), conf.Plugins)
-	plugins.InitHTTP(auth, db)
+	loadedPlugins := plugins.Load(db, tpl, auth.Group("/plugins"), conf.Plugins)
+
+	jobs.InitHTTP(auth, db, loadedPlugins)
+	plugins.InitHTTP(auth, db, loadedPlugins)
 
 	router.SetHTMLTemplate(tpl)
 

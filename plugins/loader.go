@@ -2,15 +2,12 @@ package plugins
 
 import (
 	"fmt"
-	"log"
-	"plugin"
-
-	"os"
-
-	"html/template"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"html/template"
+	"log"
+	"os"
+	"plugin"
 )
 
 const (
@@ -19,28 +16,31 @@ const (
 	TypeSelect = "select"
 )
 
-type JobStep interface {
+type Item interface {
 	GetName() string
 	GetDescription() string
 	GetVersion() string
-	GetBuildParams() []StepParam
+	GetBuildParams() []ItemParam
 	HasSettings() bool
 }
 
-type StepParam struct {
-	Name    string
-	Type    string
-	Options string
-	Value   string
+type ItemParam struct {
+	Name        string         `json:"name"`
+	Label       string         `json:"label"`
+	Type        string         `json:"type"`
+	Description string         `json:"description"`
+	Options     []ParamOptions `json:"options"`
+	Value       string         `json:"value"`
 }
 
-var loadedItems []JobStep
-
-func GetPlugins() []JobStep {
-	return loadedItems
+type ParamOptions struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
-func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, items []string) {
+func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, items []string) []Item {
+	var loadedItems []Item
+
 	params := map[string]interface{}{
 		"db": db,
 	}
@@ -64,7 +64,7 @@ func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, 
 		default:
 			log.Printf("unexpected type %T\n", v)
 			continue
-		case func(params map[string]interface{}) JobStep:
+		case func(params map[string]interface{}) Item:
 			pluginParams := params
 			pluginParams["router"] = group.Group(fmt.Sprintf("/%s", item))
 
@@ -80,7 +80,7 @@ func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, 
 				group.Static(fmt.Sprintf("%s/assets/", item), fmt.Sprintf("./plugins/%s/_assets", item))
 			}
 
-			p := s.(func(params map[string]interface{}) JobStep)(params)
+			p := s.(func(params map[string]interface{}) Item)(params)
 			log.Printf("Plugin name: %s\n", p.GetName())
 			log.Printf("Plugin description: %s\n", p.GetDescription())
 			log.Printf("Plugin version: %s\n", p.GetVersion())
@@ -88,4 +88,6 @@ func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, 
 			log.Printf("Load plugin [%s] done.\n", item)
 		}
 	}
+
+	return loadedItems
 }

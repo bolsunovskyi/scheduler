@@ -7,8 +7,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func InitHTTP(r *gin.RouterGroup, db *gorm.DB) {
+func InitHTTP(r *gin.RouterGroup, db *gorm.DB, loadedPlugins []Item) {
 	r.GET("/plugins", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "plugins/index.html", gin.H{"plugins": loadedItems})
+		c.HTML(http.StatusOK, "plugins/index.html", gin.H{
+			"plugins": loadedPlugins,
+		})
 	})
 }

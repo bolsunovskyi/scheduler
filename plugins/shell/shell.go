@@ -5,7 +5,7 @@ import "github.com/bolsunovskyi/scheduler/plugins"
 type Shell struct {
 }
 
-func MakePlugin(params map[string]interface{}) plugins.JobStep {
+func MakePlugin(params map[string]interface{}) plugins.Item {
 	return Shell{}
 }
 
@@ -21,11 +21,11 @@ func (Shell) GetVersion() string {
 	return "1.0"
 }
 
-func (Shell) GetBuildParams() []plugins.StepParam {
-	return []plugins.StepParam{
+func (Shell) GetBuildParams() []plugins.ItemParam {
+	return []plugins.ItemParam{
 		{
 			Name: "Command",
-			Type: plugins.TypeString,
+			Type: plugins.TypeText,
 		},
 	}
 }

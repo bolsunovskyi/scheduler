@@ -54,6 +54,7 @@
             <th>Name</th>
             <th>Host</th>
             <th>Port</th>
+            <th>Credential</th>
             <th></th>
         </tr>
         </thead>
@@ -63,6 +64,7 @@
             <td>{{.Name}}</td>
             <td>{{.Host}}</td>
             <td>{{.Port}}</td>
+            <td>{{.CredentialName}}</td>
             <td>
                 <a onclick="return confirm('Sure ?');" class="btn btn-primary" href="/a/plugins/ssh/servers/delete?id={{.ID}}">
                     <span class="glyphicon glyphicon-trash"></span>

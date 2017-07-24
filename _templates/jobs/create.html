@@ -117,10 +117,35 @@
                             Add build step <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a href="" ng-click="">Execute Shell</a></li>
-                            <!--<li><a href="" ng-click="addStringParam()">String Parameter</a></li>-->
+                            {{range .plugins}}
+                            <li><a ng-click="loadPluginSchema('{{.GetName}}', '{{.GetDescription}}')" href="">{{.GetName}} - {{.GetDescription}}</a></li>
+                            {{end}}
                         </ul>
                     </div>
+                </div>
+
+                <div ng-repeat="step in buildSteps" class="well form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <b><span ng-bind="step.name"></span> - <span ng-bind="step.description"></span></b>
+                            <button type="button" ng-click="removeBuildStep(step)" class="btn btn-primary btn-sm pull-right">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div ng-repeat="param in step.schema" class="form-group">
+                        <label class="col-sm-2 control-label" ng-bind="param.label"></label>
+                        <div class="col-sm-10">
+                            <input ng-if="param.type=='string'" type="text" class="form-control">
+                            <textarea ng-if="param.type=='text'" class="form-control" rows="3"></textarea>
+                            <select ng-if="param.type=='select'" class="form-control">
+                                <option ng-repeat="opt in param.options" ng-bind="opt.name"></option>
+                            </select>
+                        </div>
+                    </div>
+
+
                 </div>
 
                 <div class="job-buttons form-group">
