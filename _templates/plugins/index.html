@@ -1,0 +1,40 @@
+{{ define "plugins/index.html" }}{{ template "header" }}
+{{ template "navbar" }}
+
+<ol class="breadcrumb">
+    <li><a href="/">Scheduler</a></li>
+    <li class="active">Plugins</li>
+</ol>
+
+<div class="container-fluid">
+    <h2>Plugins</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Version</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .plugins}}
+                <tr>
+                    <td>{{.GetName}}</td>
+                    <td>{{.GetDescription}}</td>
+                    <td>{{.GetVersion}}</td>
+                    <td>
+                        {{if .HasSettings}}
+                        <a class="btn btn-default" href="/a/plugins/{{.GetName}}">
+                            <span class="glyphicon glyphicon-cog"></span>
+                        </a>
+                        {{end}}
+                    </td>
+                </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+
+{{ template "footer" }}
+{{end}}

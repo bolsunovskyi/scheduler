@@ -34,7 +34,7 @@ func (Session) TableName() string {
 	return "session"
 }
 
-func InitAdmin(db *gorm.DB, email, password string) error {
+func CreateAdmin(db *gorm.DB, email, password string) error {
 	pwd, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err

@@ -29,3 +29,7 @@ func (Shell) GetBuildParams() []plugins.StepParam {
 		},
 	}
 }
+
+func (Shell) HasSettings() bool {
+	return false
+}

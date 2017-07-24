@@ -1,0 +1,79 @@
+{{ define "ssh/servers.html" }}{{ template "header" }}
+{{ template "navbar" }}
+<link rel="stylesheet" href="/a/plugins/ssh/assets/style.css" />
+
+<ol class="breadcrumb">
+    <li><a href="/">Scheduler</a></li>
+    <li><a href="/a/plugins">Plugins</a></li>
+    <li class="active">SSH</li>
+</ol>
+
+<div class="container">
+    <h2>SSH Config</h2>
+    <ul class="nav nav-tabs">
+        <li role="presentation"><a href="/a/plugins/ssh/">Credentials</a></li>
+        <li role="presentation"  class="active"><a href="/a/plugins/ssh/servers/">Servers</a></li>
+    </ul>
+
+    <div class="add-credential">
+        <form class="well" method="post" action="">
+            {{if .error}}
+            <div class="alert alert-danger">
+                {{.error}}
+            </div>
+            {{end}}
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="host">Host</label>
+                <input type="text" id="host" name="host" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="port">Port</label>
+                <input type="text" id="port" name="port" class="form-control" value="22" />
+            </div>
+            <div class="form-group">
+                <label for="credential">Credential</label>
+                <select id="credential" class="form-control" name="credential">
+                    {{range .creds}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Add" />
+            </div>
+        </form>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Host</th>
+            <th>Port</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .servers}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Host}}</td>
+            <td>{{.Port}}</td>
+            <td>
+                <a onclick="return confirm('Sure ?');" class="btn btn-primary" href="/a/plugins/ssh/servers/delete?id={{.ID}}">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </a>
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+</div>
+
+{{ template "footer" }}
+{{end}}

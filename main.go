@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 
 	"github.com/BurntSushi/toml"
@@ -77,16 +78,24 @@ func main() {
 	router.Use(gin.Logger(), gin.Recovery(), user.Middleware(db))
 
 	router.Static("/assets", "./_assets")
-	router.LoadHTMLGlob("_templates/**/*")
+	//router.LoadHTMLGlob("_templates/**/*")
+	//router.SetHTMLTemplate()
+	tpl := template.New("app")
+	if _, err := tpl.ParseGlob("_templates/**/*"); err != nil {
+		log.Fatalln(err)
+	}
 
-	user.InitAdmin(db, conf.Admin.Email, conf.Admin.Password)
+	user.CreateAdmin(db, conf.Admin.Email, conf.Admin.Password)
 	user.InitHTTP(router, db)
 
 	auth := router.Group("/a")
 	auth.Use(user.AbortUnAuth())
 
 	jobs.InitHTTP(auth, db)
-	plugins.Load(conf.Plugins)
+	plugins.Load(db, tpl, auth.Group("/plugins"), conf.Plugins)
+	plugins.InitHTTP(auth, db)
+
+	router.SetHTMLTemplate(tpl)
 
 	log.Printf("HTTP server started on port %d\n", port)
 	router.Run(fmt.Sprintf(":%d", port))

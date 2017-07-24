@@ -5,7 +5,7 @@ default_build_path = "/tmp/"
 
 [db]
 host = "localhost"
-port = 5432
+port = 5434
 name = "postgres"
 password = "postgres"
 user = "postgres"

@@ -1,0 +1,96 @@
+{{ define "ssh/index.html" }}{{ template "header" }}
+{{ template "navbar" }}
+<link rel="stylesheet" href="/a/plugins/ssh/assets/style.css" />
+
+<ol class="breadcrumb">
+    <li><a href="/">Scheduler</a></li>
+    <li><a href="/a/plugins">Plugins</a></li>
+    <li class="active">SSH</li>
+</ol>
+
+<div class="container">
+    <h2>SSH Config</h2>
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="/a/plugins/ssh/">Credentials</a></li>
+        <li role="presentation"><a href="/a/plugins/ssh/servers/">Servers</a></li>
+    </ul>
+
+    <div class="add-credential">
+        <!--<a class="btn btn-primary add-credential-btn" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">-->
+            <!--Add credential-->
+        <!--</a>-->
+        <!--<div class="collapse" id="collapseExample">-->
+            <!--<div>-->
+                <!--<form class="well" method="post" action="">-->
+                    <!--<div class="form-group">-->
+                        <!--<label for="username">Username</label>-->
+                        <!--<input type="text" id="username" name="username" class="form-control" />-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<label for="password">Password</label>-->
+                        <!--<input type="text" id="password" name="password" class="form-control" />-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<label for="private-key">Private Key</label>-->
+                        <!--<textarea id="private-key" name="key" class="form-control" rows="4"></textarea>-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<input type="submit" class="btn btn-primary" value="Add" />-->
+                    <!--</div>-->
+                <!--</form>-->
+            <!--</div>-->
+        <!--</div>-->
+        <form class="well" method="post" action="">
+            {{if .error}}
+            <div class="alert alert-danger">
+                {{.error}}
+            </div>
+            {{end}}
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="private-key">Private Key</label>
+                <textarea id="private-key" name="key" class="form-control" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Add" />
+            </div>
+        </form>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>
+                Username
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .creds}}
+            <tr>
+                <td>{{.Name}}</td>
+                <td>{{.Username}}</td>
+                <td><a onclick="return confirm('Sure ?');" class="btn btn-primary" href="/a/plugins/ssh/credential/delete?id={{.ID}}">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </a></td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
+
+{{ template "footer" }}
+{{end}}
