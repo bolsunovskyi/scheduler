@@ -1,6 +1,6 @@
 ## default config
 
-plugins = ["ssh"]
+plugins = ["ssh", "shell"]
 default_build_path = "/tmp/"
 
 [db]

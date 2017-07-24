@@ -15583,12 +15583,16 @@ angular.module('app').controller('job', [
     '$scope',
     function ($scope) {
 
-        $scope.parametrized = false;
-        $scope.paramChange = function () {
-            console.log($scope.parametrized);
+        $scope.removeParam = function(p){
+            for (var i=0;i<$scope.params.length;i++) {
+                if ($scope.params[i] == p) {
+                    $scope.params.splice(i, 1);
+                    break;
+                }
+            }
         };
 
-
+        $scope.parametrized = false;
         $scope.params = [];
 
         $scope.addChoiceParam = function(){
@@ -15606,5 +15610,7 @@ angular.module('app').controller('job', [
 
             return false;
         };
+
+
     }
 ]);

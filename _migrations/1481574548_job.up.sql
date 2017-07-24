@@ -3,7 +3,6 @@ CREATE TABLE "job" (
   name varchar(256) NOT NULL,
   description TEXT NULL,
   is_enabled bool DEFAULT true,
-  is_parametrized bool DEFAULT false,
   params TEXT NULL,
   remote_trigger_token varchar(256) NULL,
   periodical_schedule varchar(256) NULL,

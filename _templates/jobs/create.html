@@ -7,7 +7,7 @@
             <h2>Create Job</h2>
         </div>
         <div class="panel-body">
-            <form method="POST">
+            <form method="POST" action="">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" id="name" class="form-control" name="name" />
@@ -19,15 +19,18 @@
                 <div class="form-group">
                     <div class="checkbox">
                         <label>
-                            <input ng-model="parametrized" ng-change="paramChange()" type="checkbox"> This project is parametrized
+                            <input ng-model="parametrized" type="checkbox"> This project is parametrized
                         </label>
                     </div>
-                    <div ng-if="!parametrized">
+                    <div ng-if="parametrized">
                         <div ng-repeat="p in params">
                             <div ng-if="p.type=='choice'" class="choice-param form-horizontal well">
                                 <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-2">
+                                    <div class="col-sm-offset-2 col-sm-10">
                                         <b>Choice parameter</b>
+                                        <button type="button" ng-click="removeParam(p)" class="btn btn-primary btn-sm pull-right">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -51,8 +54,11 @@
                             </div>
                             <div ng-if="p.type=='string'" class="string-param form-horizontal well">
                                 <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-2">
+                                    <div class="col-sm-offset-2 col-sm-10">
                                         <b>String parameter</b>
+                                        <button type="button" ng-click="removeParam(p)" class="btn btn-primary btn-sm pull-right">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -88,8 +94,37 @@
                     </div>
                 </div>
 
-                <div class="well job-buttons">
-                    <button class="btn btn-primary">Save</button>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input ng-model="buildRemotely" type="checkbox"> Trigger builds remotely
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input ng-model="buildPeriodically" type="checkbox"> Build periodically
+                        </label>
+                    </div>
+                </div>
+                <h2>Build</h2>
+
+                <div class="form-group">
+                    <div class="btn-group param-btn">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Add build step <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="" ng-click="">Execute Shell</a></li>
+                            <!--<li><a href="" ng-click="addStringParam()">String Parameter</a></li>-->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="job-buttons form-group">
+                    <input type="submit" class="btn btn-primary" value="Save" />
                     <button class="btn btn-default">Apply</button>
                 </div>
             </form>

@@ -2,26 +2,26 @@ package main
 
 import "github.com/bolsunovskyi/scheduler/plugins"
 
-type SSH struct {
+type Shell struct {
 }
 
 func MakePlugin(params map[string]interface{}) plugins.JobStep {
-	return SSH{}
+	return Shell{}
 }
 
-func (SSH) GetName() string {
-	return "ssh"
+func (Shell) GetName() string {
+	return "shell"
 }
 
-func (SSH) GetDescription() string {
-	return "Send files or execute commands over SSH"
+func (Shell) GetDescription() string {
+	return "Execute shell commands"
 }
 
-func (SSH) GetVersion() string {
+func (Shell) GetVersion() string {
 	return "1.0"
 }
 
-func (SheSSHll) GetBuildParams() []plugins.StepParam {
+func (Shell) GetBuildParams() []plugins.StepParam {
 	return []plugins.StepParam{
 		{
 			Name: "Command",
