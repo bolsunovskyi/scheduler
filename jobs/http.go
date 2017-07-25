@@ -12,11 +12,8 @@ func InitHTTP(r *gin.RouterGroup, db *gorm.DB, loadedPlugins []plugins.Item) {
 		c.HTML(http.StatusOK, "jobs/index.html", gin.H{})
 	})
 
-	r.GET("/jobs/create", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "jobs/create.html", gin.H{
-			"plugins": loadedPlugins,
-		})
-	})
-
 	r.GET("/jobs/plugins/schema", makePluginSchemaHandler(loadedPlugins))
+
+	r.GET("/jobs/create", makeCreateGetHandler(db, loadedPlugins))
+	r.POST("/jobs/create", makeCreatePostHandler(db, loadedPlugins))
 }

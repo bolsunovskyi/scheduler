@@ -1,5 +1,5 @@
-{{ define "jobs/create.html" }}{{ template "header" }}
-{{ template "navbar" }}
+[[ define "jobs/create.html" ]][[ template "header" ]]
+[[ template "navbar" ]]
 
 <div class="container" ng-app="app">
     <div class="panel panel-default" ng-controller="job">
@@ -23,7 +23,7 @@
                         </label>
                     </div>
                     <div ng-if="parametrized">
-                        <div ng-repeat="p in params">
+                        <div ng-repeat="(key, p) in params">
                             <div ng-if="p.type=='choice'" class="choice-param form-horizontal well">
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-10">
@@ -36,19 +36,20 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Name</label>
                                     <div class="col-sm-10">
-                                        <input ng-model="p.name" type="text" class="form-control">
+                                        <input ng-model="p.name" name="params[{{key}}][name]" type="text" class="form-control">
+                                        <input type="hidden" name="params[{{key}}][type]" value="choice" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Choices</label>
                                     <div class="col-sm-10">
-                                        <textarea ng-model="p.choices" rows="3" class="form-control"></textarea>
+                                        <textarea ng-model="p.choices" rows="3" name="params[{{key}}][choices]" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Description</label>
                                     <div class="col-sm-10">
-                                        <textarea ng-model="p.description" rows="2" class="form-control"></textarea>
+                                        <textarea ng-model="p.description" rows="2" name="params[{{key}}][description]" class="form-control"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -64,19 +65,20 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Name</label>
                                     <div class="col-sm-10">
-                                        <input ng-model="p.name" type="text" class="form-control">
+                                        <input ng-model="p.name" name="params[{{key}}][name]" type="text" class="form-control">
+                                        <input type="hidden" name="params[{{key}}][type]" value="string" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Default Value</label>
                                     <div class="col-sm-10">
-                                        <input ng-model="p.default" type="text" class="form-control">
+                                        <input ng-model="p.default" name="params[{{key}}][default]" type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Description</label>
                                     <div class="col-sm-10">
-                                        <textarea ng-model="p.description" rows="2" class="form-control"></textarea>
+                                        <textarea ng-model="p.description" rows="2" name="params[{{key}}][description]" class="form-control"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -100,6 +102,16 @@
                             <input ng-model="buildRemotely" type="checkbox"> Trigger builds remotely
                         </label>
                     </div>
+
+                    <div class="well form-horizontal" ng-if="buildRemotely">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Authentication Token</label>
+                            <div class="col-sm-10">
+                                <input  type="text" class="form-control" />
+                                <small>Use the following URL to trigger build remotely: SCHEDULER_URL/...</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -107,6 +119,16 @@
                         <label>
                             <input ng-model="buildPeriodically" type="checkbox"> Build periodically
                         </label>
+                    </div>
+
+                    <div class="well form-horizontal" ng-if="buildPeriodically">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Schedule</label>
+                            <div class="col-sm-10">
+                                <input  type="text" class="form-control" />
+                                <small>Use cron syntax here</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <h2>Build</h2>
@@ -117,14 +139,15 @@
                             Add build step <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            {{range .plugins}}
-                            <li><a ng-click="loadPluginSchema('{{.GetName}}', '{{.GetDescription}}')" href="">{{.GetName}} - {{.GetDescription}}</a></li>
-                            {{end}}
+                            [[range .plugins]]
+                            <li><a ng-click="loadPluginSchema('[[.GetName]]', '[[.GetDescription]]')" href="">[[.GetName]] - [[.GetDescription]]</a></li>
+                            [[end]]
                         </ul>
                     </div>
                 </div>
 
-                <div ng-repeat="step in buildSteps" class="well form-horizontal">
+                <div ng-repeat="(skey, step) in buildSteps" class="well form-horizontal">
+                    <input type="hidden" name="step[skey][name]" value="{{step.name}}" />
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <b><span ng-bind="step.name"></span> - <span ng-bind="step.description"></span></b>
@@ -134,7 +157,7 @@
                         </div>
                     </div>
 
-                    <div ng-repeat="param in step.schema" class="form-group">
+                    <div ng-repeat="(pkey, param) in step.schema" class="form-group">
                         <label class="col-sm-2 control-label" ng-bind="param.label"></label>
                         <div class="col-sm-10">
                             <input ng-if="param.type=='string'" type="text" class="form-control">
@@ -157,5 +180,5 @@
     </div>
 </div>
 
-{{ template "footer" }}
-{{end}}
+[[ template "footer" ]]
+[[end]]

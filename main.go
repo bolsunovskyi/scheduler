@@ -78,7 +78,7 @@ func main() {
 	router.Use(gin.Logger(), gin.Recovery(), user.Middleware(db))
 
 	router.Static("/assets", "./_assets")
-	tpl := template.New("app")
+	tpl := template.New("app").Delims("[[", "]]")
 	if _, err := tpl.ParseGlob("_templates/**/*"); err != nil {
 		log.Fatalln(err)
 	}

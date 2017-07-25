@@ -1,5 +1,5 @@
-{{ define "ssh/index.html" }}{{ template "header" }}
-{{ template "navbar" }}
+[[ define "ssh/index.html" ]][[ template "header" ]]
+[[ template "navbar" ]]
 <link rel="stylesheet" href="/a/plugins/ssh/assets/style.css" />
 
 <ol class="breadcrumb">
@@ -41,11 +41,11 @@
             <!--</div>-->
         <!--</div>-->
         <form class="well" method="post" action="">
-            {{if .error}}
+            [[if .error]]
             <div class="alert alert-danger">
-                {{.error}}
+                [[.error]]
             </div>
-            {{end}}
+            [[end]]
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" name="name" class="form-control" />
@@ -79,18 +79,18 @@
         </tr>
         </thead>
         <tbody>
-        {{range .creds}}
+        [[range .creds]]
             <tr>
-                <td>{{.Name}}</td>
-                <td>{{.Username}}</td>
-                <td><a onclick="return confirm('Sure ?');" class="btn btn-primary" href="/a/plugins/ssh/credential/delete?id={{.ID}}">
+                <td>[[.Name]]</td>
+                <td>[[.Username]]</td>
+                <td><a onclick="return confirm('Sure ?');" class="btn btn-primary" href="/a/plugins/ssh/credential/delete?id=[[.ID]]">
                     <span class="glyphicon glyphicon-trash"></span>
                 </a></td>
             </tr>
-        {{end}}
+        [[end]]
         </tbody>
     </table>
 </div>
 
-{{ template "footer" }}
-{{end}}
+[[ template "footer" ]]
+[[end]]

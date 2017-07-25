@@ -1,6 +1,7 @@
 package main
 
 import (
+	"C"
 	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"

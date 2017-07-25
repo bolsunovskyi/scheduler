@@ -1,14 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	vd "gopkg.in/go-playground/validator.v8"
+	_ "gopkg.in/go-playground/validator.v9"
 	"log"
 	"net/http"
 	"strconv"
-
-	"fmt"
-
-	"github.com/gin-gonic/gin"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 func (s SSH) initHTTP() {
@@ -46,7 +45,7 @@ func (s SSH) initHTTP() {
 			PrivateKey: c.PostForm("key"),
 		}
 
-		if err := validator.New().Struct(&cred); err != nil {
+		if err := vd.New().Struct(&cred); err != nil {
 			c.HTML(http.StatusOK, "ssh/index.html", gin.H{
 				"error": err.Error(),
 			})
@@ -157,7 +156,7 @@ func (s SSH) initHTTP() {
 			CredentialID: credID,
 		}
 
-		if err := validator.New().Struct(&srv); err != nil {
+		if err := vd.New().Struct(&srv); err != nil {
 			c.HTML(http.StatusOK, "ssh/servers.html", gin.H{
 				"error": err.Error(),
 				"creds": creds,

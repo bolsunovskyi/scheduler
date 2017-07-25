@@ -1,5 +1,5 @@
-{{ define "plugins/index.html" }}{{ template "header" }}
-{{ template "navbar" }}
+[[ define "plugins/index.html" ]][[ template "header" ]]
+[[ template "navbar" ]]
 
 <ol class="breadcrumb">
     <li><a href="/">Scheduler</a></li>
@@ -18,23 +18,23 @@
             </tr>
         </thead>
         <tbody>
-            {{range .plugins}}
+            [[range .plugins]]
                 <tr>
-                    <td>{{.GetName}}</td>
-                    <td>{{.GetDescription}}</td>
-                    <td>{{.GetVersion}}</td>
+                    <td>[[.GetName]]</td>
+                    <td>[[.GetDescription]]</td>
+                    <td>[[.GetVersion]]</td>
                     <td>
-                        {{if .HasSettings}}
-                        <a class="btn btn-default" href="/a/plugins/{{.GetName}}">
+                        [[if .HasSettings]]
+                        <a class="btn btn-default" href="/a/plugins/[[.GetName]]">
                             <span class="glyphicon glyphicon-cog"></span>
                         </a>
-                        {{end}}
+                        [[end]]
                     </td>
                 </tr>
-            {{end}}
+            [[end]]
         </tbody>
     </table>
 </div>
 
-{{ template "footer" }}
-{{end}}
+[[ template "footer" ]]
+[[end]]

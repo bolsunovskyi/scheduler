@@ -1,5 +1,5 @@
-{{ define "ssh/servers.html" }}{{ template "header" }}
-{{ template "navbar" }}
+[[ define "ssh/servers.html" ]][[ template "header" ]]
+[[ template "navbar" ]]
 <link rel="stylesheet" href="/a/plugins/ssh/assets/style.css" />
 
 <ol class="breadcrumb">
@@ -17,11 +17,11 @@
 
     <div class="add-credential">
         <form class="well" method="post" action="">
-            {{if .error}}
+            [[if .error]]
             <div class="alert alert-danger">
-                {{.error}}
+                [[.error]]
             </div>
-            {{end}}
+            [[end]]
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" name="name" class="form-control" />
@@ -37,9 +37,9 @@
             <div class="form-group">
                 <label for="credential">Credential</label>
                 <select id="credential" class="form-control" name="credential">
-                    {{range .creds}}
-                    <option value="{{.ID}}">{{.Name}}</option>
-                    {{end}}
+                    [[range .creds]]
+                    <option value="[[.ID]]">[[.Name]]</option>
+                    [[end]]
                 </select>
             </div>
             <div class="form-group">
@@ -59,23 +59,23 @@
         </tr>
         </thead>
         <tbody>
-        {{range .servers}}
+        [[range .servers]]
         <tr>
-            <td>{{.Name}}</td>
-            <td>{{.Host}}</td>
-            <td>{{.Port}}</td>
-            <td>{{.CredentialName}}</td>
+            <td>[[.Name]]</td>
+            <td>[[.Host]]</td>
+            <td>[[.Port]]</td>
+            <td>[[.CredentialName]]</td>
             <td>
-                <a onclick="return confirm('Sure ?');" class="btn btn-primary" href="/a/plugins/ssh/servers/delete?id={{.ID}}">
+                <a onclick="return confirm('Sure ?');" class="btn btn-primary" href="/a/plugins/ssh/servers/delete?id=[[.ID]]">
                     <span class="glyphicon glyphicon-trash"></span>
                 </a>
             </td>
         </tr>
-        {{end}}
+        [[end]]
         </tbody>
     </table>
 
 </div>
 
-{{ template "footer" }}
-{{end}}
+[[ template "footer" ]]
+[[end]]

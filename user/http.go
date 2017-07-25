@@ -1,13 +1,12 @@
 package user
 
 import (
-	"net/http"
-
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/go-playground/validator.v9"
+	"net/http"
 	"time"
 )
 
@@ -77,4 +76,9 @@ func InitHTTP(r *gin.Engine, db *gorm.DB) {
 		c.HTML(http.StatusOK, "user/index.html", gin.H{})
 	})
 	r.POST("/", makeLoginFunc(db))
+
+	r.GET("/logout", func(c *gin.Context) {
+		c.SetCookie("session", "", -10, "/", "", false, false)
+		c.Redirect(http.StatusSeeOther, "/")
+	})
 }

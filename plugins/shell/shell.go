@@ -1,6 +1,9 @@
 package main
 
-import "github.com/bolsunovskyi/scheduler/plugins"
+import (
+	"C"
+	"github.com/bolsunovskyi/scheduler/plugins"
+)
 
 type Shell struct {
 }
@@ -24,8 +27,9 @@ func (Shell) GetVersion() string {
 func (Shell) GetBuildParams() []plugins.ItemParam {
 	return []plugins.ItemParam{
 		{
-			Name: "Command",
-			Type: plugins.TypeText,
+			Label: "Command",
+			Name:  "command",
+			Type:  plugins.TypeText,
 		},
 	}
 }
