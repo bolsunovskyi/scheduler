@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	vd "gopkg.in/go-playground/validator.v8"
-	_ "gopkg.in/go-playground/validator.v9"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	vd "gopkg.in/go-playground/validator.v9"
 )
 
 func (s SSH) initHTTP() {

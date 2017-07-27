@@ -1,7 +1,6 @@
 package main
 
 import (
-	"C"
 	"github.com/bolsunovskyi/scheduler/plugins"
 )
 

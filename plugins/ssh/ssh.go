@@ -1,12 +1,12 @@
 package main
 
 import (
-	"C"
+	"log"
+	"strconv"
+
 	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"log"
-	"strconv"
 )
 
 type SSH struct {
