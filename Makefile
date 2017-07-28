@@ -5,12 +5,12 @@ run: scheduler
 
 scheduler: plugin
 	$(call blue, "Build scheduler...")
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o scheduler .
+	go build -a -o scheduler .
 
 plugin: clean
 	$(call blue, "Build plugins...")
-	CGO_ENABLED=0 GOOS=linux go build -buildmode=plugin -a -installsuffix cgo -o plugins/ssh/ssh.so github.com/bolsunovskyi/scheduler/plugins/ssh
-	CGO_ENABLED=0 GOOS=linux go build -buildmode=plugin -a -installsuffix cgo -o plugins/shell/shell.so github.com/bolsunovskyi/scheduler/plugins/shell
+	go build -buildmode=plugin -a -o plugins/ssh/ssh.so github.com/bolsunovskyi/scheduler/plugins/ssh
+	go build -buildmode=plugin -a -o plugins/shell/shell.so github.com/bolsunovskyi/scheduler/plugins/shell
 
 clean:
 	$(call blue, "Clean work tree...")
