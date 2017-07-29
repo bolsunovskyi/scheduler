@@ -7,6 +7,7 @@ CREATE TABLE "job" (
   remote_trigger_token varchar(256) NULL,
   periodical_schedule varchar(256) NULL,
   build_path varchar(1024) NULL,
+  steps TEXT NULL,
   created_at timestamp without time zone,
   updated_at timestamp without time zone,
   deleted_at timestamp without time zone

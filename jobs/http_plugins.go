@@ -8,7 +8,7 @@ import (
 
 func makePluginSchemaHandler(loadedPlugins []plugins.Item) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if pluginName := c.Query("name"); pluginName != "" {
+		if pluginName := c.Param("name"); pluginName != "" {
 			for _, v := range loadedPlugins {
 				if v.GetName() == pluginName {
 					c.JSON(http.StatusOK, v.GetBuildParams())

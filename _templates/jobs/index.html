@@ -23,7 +23,28 @@
             <li role="presentation"><a href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
             <!--<li role="presentation"><a href="#">Messages</a></li>-->
         </ul>
+
+        <table class="table table-stripped">
+            <thead>
+            <tr>
+                <th>Status</th>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            [[range .jobs]]
+            <tr>
+                <td></td>
+                <td><a href="/a/jobs/status/[[.ID]]">[[.Name]]</a></td>
+                <td>[[.Description]]</td>
+            </tr>
+            [[end]]
+            </tbody>
+        </table>
     </div>
+
+
 </div>
 
 [[ template "footer" ]]

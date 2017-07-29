@@ -58,5 +58,5 @@ func CreateAdmin(db *gorm.DB, email, password string) error {
 	admin.Password = string(pwd)
 	admin.UpdatedAt = time.Now()
 
-	return db.Create(&admin).Error
+	return db.Save(&admin).Error
 }

@@ -1,0 +1,33 @@
+[[ define "jobs/status.html" ]][[ template "header" ]]
+[[ template "navbar" ]]
+
+<div class="container-fluid">
+    <div class="col-lg-2">
+        <ul class="nav nav-stacked">
+            <li role="presentation"><a href="#">Build Now</a></li>
+            <li role="presentation"><a href="/a/jobs/edit/[[.job.ID]]">Configure</a></li>
+            <li role="presentation"><a href="#">Disable</a></li>
+            <li role="presentation"><a href="#">Delete</a></li>
+        </ul>
+    </div>
+
+    <div class="col-lg-10">
+        <div class="jumbotron">
+            <h2>Job <b>[[.job.Name]]</b></h2>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Build History</h4>
+            </div>
+            <div class="panel-body">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+[[ template "footer" ]]
+[[end]]

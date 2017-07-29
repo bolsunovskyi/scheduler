@@ -1,27 +1,45 @@
 package jobs
 
 import (
+	"encoding/json"
 	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"net/http"
 )
 
-func makeCreatePostHandler(db *gorm.DB, loadedPlugins []plugins.Item) gin.HandlerFunc {
+func makeCreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//name := c.PostForm("name")
-		//params := c.PostFormArray("params[]")
-		//fmt.Println(name)
-		//fmt.Println(params)
-		//fmt.Printf("%+v\n", c.Request.PostForm)
+		var j Model
+		if err := json.NewDecoder(c.Request.Body).Decode(&j); err != nil {
+			c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+			return
+		}
 
-		c.HTML(http.StatusOK, "jobs/create.html", gin.H{
-			"plugins": loadedPlugins,
-		})
+		bts, err := json.Marshal(j.Params)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+			return
+		}
+		j.PramsEncoded = string(bts)
+
+		bts, err = json.Marshal(j.Steps)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+			return
+		}
+		j.StepsEncoded = string(bts)
+
+		if err := db.Save(&j).Error; err != nil {
+			c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, j)
 	}
 }
 
-func makeCreateGetHandler(db *gorm.DB, loadedPlugins []plugins.Item) gin.HandlerFunc {
+func makeCreateGetHandler(loadedPlugins []plugins.Item) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.HTML(http.StatusOK, "jobs/create.html", gin.H{
 			"plugins": loadedPlugins,
