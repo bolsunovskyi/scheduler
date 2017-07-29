@@ -1,0 +1,58 @@
+[[ define "jobs/build.html" ]][[ template "header" ]]
+[[ template "navbar" ]]
+
+<div class="container-fluid" ng-controller="build">
+    <div class="col-lg-2">
+        <ul class="nav nav-stacked">
+            <li role="presentation"><a href="/a/jobs/status/[[.job.ID]]">Status</a></li>
+            <li role="presentation"><a href="/a/jobs/edit/[[.job.ID]]">Configure</a></li>
+            <li role="presentation"><a href="#">Disable</a></li>
+            <li role="presentation"><a href="#">Delete</a></li>
+        </ul>
+    </div>
+
+    <div class="col-lg-10">
+        <div class="jumbotron">
+            <h2>Job <b>[[.job.Name]]</b></h2>
+            <small>This build requires parameters...</small>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Build Params</h4>
+                </div>
+                <div class="panel-body">
+                    <form method="POST" action="">
+                        [[range .job.Params]]
+                        <div class="form-group">
+                            <label>[[.name]]</label>
+                            [[if eq .type "string"]]
+                                <input name="[[.name]]" type="text" class="form-control" value="[[.default]]" />
+                            [[end]]
+
+                            [[if eq .type "choice"]]
+                                <select name="[[.name]]" class="form-control">
+                                    [[range $index, $element := split .choices]]
+                                        <option>[[$element]]</option>
+                                    [[end]]
+                                </select>
+
+                            [[end]]
+                            <small class="param-description">[[.description]]</small>
+                        </div>
+                        [[end]]
+
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary form-control" value="Build" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+[[ template "footer" ]]
+[[end]]

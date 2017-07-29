@@ -29,7 +29,25 @@
     display: none !important;
 }
 
-/*.job-buttons {*/
+.param-description {
+    margin: 5px 0 0 5px;
+    display: inline-block;
+}
+
+.job-buttons {
+    width:160px;
     /*position: fixed;*/
-    /*bottom: 0;*/
-/*}*/
+    /*bottom:0;*/
+    /*margin-bottom:35px!important;*/
+    margin-bottom: 0px!important;
+    background: rgba(244, 244, 244, .5)!important;
+}
+
+.last-element {
+    /*margin-bottom: 100px!important;*/
+}
+
+.configure-nav {
+    position: fixed;
+    width: 50%;
+}

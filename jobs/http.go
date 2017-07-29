@@ -13,4 +13,6 @@ func InitHTTP(r *gin.RouterGroup, db *gorm.DB, loadedPlugins []plugins.Item) {
 	r.POST("/jobs/create", makeCreatePostHandler(db))
 	r.GET("/jobs/edit/:id", makeEditGetHandler(db, loadedPlugins))
 	r.GET("/jobs/status/:id", makeStatusGetHandler(db))
+	r.GET("/jobs/build/:id", makeBuildGetHandler(db))
+	r.POST("/jobs/build/:id", makeBuildPostHandler(db))
 }

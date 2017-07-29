@@ -15753,6 +15753,9 @@ angular.module('app')
 
     }
 ])
+    .controller('build', ['$scope', function($scope){
+        console.log($scope);
+    }])
     .factory('job', function($resource) {
         return $resource('/a/jobs', {}, {
             pluginSchema: {

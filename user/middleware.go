@@ -51,6 +51,7 @@ func Middleware(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.Set("user", &u)
+		c.Set("userID", u.ID)
 		c.Next()
 	}
 }

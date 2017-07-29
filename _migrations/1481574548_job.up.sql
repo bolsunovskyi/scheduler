@@ -13,17 +13,22 @@ CREATE TABLE "job" (
   deleted_at timestamp without time zone
 );
 
-CREATE TYPE "job_action" AS ENUM ('run', 'edit', 'delete', 'create');
+CREATE TYPE "job_build_status" AS ENUM ('queue', 'proceed', 'success', 'failure');
 
-CREATE TABLE job_history (
+CREATE TABLE job_build (
   id SERIAL PRIMARY KEY,
-  "action" job_action DEFAULT 'run',
+  number int not null,
+  status job_build_status DEFAULT 'queue',
   user_id int,
+  job_id int,
   log TEXT null,
-  created_at timestamp without time zone
+  params TEXT null,
+  created_at timestamp without time zone,
+  updated_at timestamp without time zone
 );
 
-ALTER TABLE job_history ADD CONSTRAINT fk_history_user FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE;
+ALTER TABLE job_build ADD CONSTRAINT fk_job_build_user FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE;
+ALTER TABLE job_build ADD CONSTRAINT fk_job_build_job FOREIGN KEY (job_id) REFERENCES "job" (id) ON DELETE CASCADE;
 
 CREATE TABLE tab (
   id SERIAL PRIMARY KEY,

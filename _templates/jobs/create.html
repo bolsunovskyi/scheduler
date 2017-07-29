@@ -1,219 +1,228 @@
 [[ define "jobs/create.html" ]][[ template "header" ]]
 [[ template "navbar" ]]
 
+<div class="container-fluid" ng-controller="job">
+    <div class="col-xs-2">
+        <ul class="nav nav-stacked configure-nav">
+            <li role="presentation"><a href="/a/jobs/status/[[.job.ID]]">Status</a></li>
+            <li role="presentation"><a href="/a/jobs/build/[[.job.ID]]">Build</a></li>
+            <li role="presentation"><a href="#">Disable</a></li>
+            <li role="presentation"><a href="#">Delete</a></li>
+            <hr />
+            <li role="presentation"><a href="" ng-click="apply()">Apply</a></li>
+            <li role="presentation"><a href="" ng-click="formSubmit()">Save</a></li>
+        </ul>
 
 
-<div class="container">
+    </div>
 
-
-
-
-    <div class="panel panel-default" ng-controller="job">
-
-        <div class="modal-dialog modal-sm my-modal sample-show-hide ng-cloak" ng-show="applied"><div class="modal-content" uib-modal-transclude="">
-            <div class="modal-header ng-scope">
-                <h3 class="modal-title">Changes applied</h3>
-            </div>
-            <div class="modal-body ng-scope">
-                Your job has been saved.
-            </div>
-        </div></div>
-
-        <div class="panel-heading">
-            <h2>Create Job</h2>
-        </div>
-        <div class="panel-body">
-            <form ng-submit="formSubmit();">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input ng-model="job.name" required type="text" id="name" class="form-control" name="name" value="[[.job.Name]]" />
+    <div class="col-xs-8">
+        <div class="panel panel-default" >
+            <div class="modal-dialog modal-sm my-modal sample-show-hide ng-cloak" ng-show="applied"><div class="modal-content" uib-modal-transclude="">
+                <div class="modal-header ng-scope">
+                    <h3 class="modal-title">Changes applied</h3>
                 </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea ng-model="job.description" name="description" id="description" rows="2" class="form-control"></textarea>
+                <div class="modal-body ng-scope">
+                    Your job has been saved.
                 </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input ng-model="parametrized" type="checkbox"> This project is parametrized
-                        </label>
+            </div></div>
+
+            <div class="panel-heading">
+                <h2>Create Job</h2>
+            </div>
+            <div class="panel-body">
+                <form ng-submit="formSubmit();">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input ng-model="job.name" required type="text" id="name" class="form-control" name="name" value="[[.job.Name]]" />
                     </div>
-                    <div ng-if="parametrized" class="ng-cloak">
-                        <div ng-repeat="(key, p) in job.params" >
-                            <div ng-if="p.type=='choice'" class="choice-param form-horizontal well">
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <b>Choice parameter</b>
-                                        <button type="button" ng-click="removeParam(p)" class="btn btn-primary btn-sm pull-right">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea ng-model="job.description" name="description" id="description" rows="2" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="parametrized" type="checkbox"> This project is parametrized
+                            </label>
+                        </div>
+                        <div ng-if="parametrized" class="ng-cloak">
+                            <div ng-repeat="(key, p) in job.params" >
+                                <div ng-if="p.type=='choice'" class="choice-param form-horizontal well">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <b>Choice parameter</b>
+                                            <button type="button" ng-click="removeParam(p)" class="btn btn-primary btn-sm pull-right">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Name</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="p.name" name="params[{{key}}][name]" type="text" class="form-control">
+                                            <input type="hidden" name="params[{{key}}][type]" value="choice" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Choices</label>
+                                        <div class="col-sm-10">
+                                            <textarea ng-model="p.choices" rows="3" name="params[{{key}}][choices]" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Description</label>
+                                        <div class="col-sm-10">
+                                            <textarea ng-model="p.description" rows="2" name="params[{{key}}][description]" class="form-control"></textarea>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Name</label>
-                                    <div class="col-sm-10">
-                                        <input ng-model="p.name" name="params[{{key}}][name]" type="text" class="form-control">
-                                        <input type="hidden" name="params[{{key}}][type]" value="choice" />
+                                <div ng-if="p.type=='string'" class="string-param form-horizontal well">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <b>String parameter</b>
+                                            <button type="button" ng-click="removeParam(p)" class="btn btn-primary btn-sm pull-right">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Choices</label>
-                                    <div class="col-sm-10">
-                                        <textarea ng-model="p.choices" rows="3" name="params[{{key}}][choices]" class="form-control"></textarea>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Name</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="p.name" name="params[{{key}}][name]" type="text" class="form-control">
+                                            <input type="hidden" name="params[{{key}}][type]" value="string" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Description</label>
-                                    <div class="col-sm-10">
-                                        <textarea ng-model="p.description" rows="2" name="params[{{key}}][description]" class="form-control"></textarea>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Default Value</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="p.default" name="params[{{key}}][default]" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Description</label>
+                                        <div class="col-sm-10">
+                                            <textarea ng-model="p.description" rows="2" name="params[{{key}}][description]" class="form-control"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div ng-if="p.type=='string'" class="string-param form-horizontal well">
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <b>String parameter</b>
-                                        <button type="button" ng-click="removeParam(p)" class="btn btn-primary btn-sm pull-right">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Name</label>
-                                    <div class="col-sm-10">
-                                        <input ng-model="p.name" name="params[{{key}}][name]" type="text" class="form-control">
-                                        <input type="hidden" name="params[{{key}}][type]" value="string" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Default Value</label>
-                                    <div class="col-sm-10">
-                                        <input ng-model="p.default" name="params[{{key}}][default]" type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Description</label>
-                                    <div class="col-sm-10">
-                                        <textarea ng-model="p.description" rows="2" name="params[{{key}}][description]" class="form-control"></textarea>
-                                    </div>
+
+                            <div class="btn-group param-btn">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Add Parameter <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="" ng-click="addChoiceParam()">Choice Parameter</a></li>
+                                    <li><a href="" ng-click="addStringParam()">String Parameter</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="buildRemotely" type="checkbox"> Trigger builds remotely
+                            </label>
+                        </div>
+
+                        <div class="well form-horizontal ng-cloak" ng-if="buildRemotely">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Authentication Token</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="job.remote_token" name="remote_token" type="text" class="form-control" />
+                                    <small>Use the following URL to trigger build remotely: SCHEDULER_URL/...</small>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="buildPath" type="checkbox"> Set build path
+                            </label>
+                        </div>
+
+                        <div class="well form-horizontal ng-cloak" ng-if="buildPath">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Path</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="job.build_path" name="build_path" type="text" class="form-control" />
+                                    <small>Folder where project will be build.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="buildPeriodically" type="checkbox"> Build periodically
+                            </label>
+                        </div>
+
+                        <div class="well form-horizontal ng-cloak" ng-if="buildPeriodically">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Schedule</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="job.schedule" name="periodical_schedule" type="text" class="form-control" />
+                                    <small>Use cron syntax here</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>Build</h2>
+
+                    <div ng-repeat="(skey, step) in job.steps" class="well form-horizontal ng-cloak">
+                        <input type="hidden" name="step[{{skey}}][plugin_name]" value="{{step.name}}" />
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <b><span ng-bind="step.name"></span> - <span ng-bind="step.description"></span></b>
+                                <button type="button" ng-click="removeBuildStep(step)" class="btn btn-primary btn-sm pull-right">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div ng-repeat="(pkey, param) in step.schema" class="form-group">
+                            <input type="hidden" name="step[{{skey}}][plugin_params][{{pkey}}][name]" value="{{param.name}}" />
+                            <input type="hidden" name="step[{{skey}}][plugin_params][{{pkey}}][type]" value="{{param.type}}" />
+
+                            <label class="col-sm-2 control-label" ng-bind="param.label"></label>
+                            <div class="col-sm-10">
+                                <input ng-model="param.value" name="step[{{skey}}][plugin_params][{{pkey}}][value]" ng-if="param.type=='string'" type="text" class="form-control">
+                                <textarea ng-model="param.value" name="step[{{skey}}][plugin_params][{{pkey}}][value]" ng-if="param.type=='text'" class="form-control" rows="3"></textarea>
+                                <select ng-model="param.value" name="step[{{skey}}][plugin_params][{{pkey}}][value]" ng-if="param.type=='select'" class="form-control">
+                                    <option ng-repeat="opt in param.options" value="{{opt.value}}" ng-bind="opt.name"></option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="form-group last-element">
                         <div class="btn-group param-btn">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Add Parameter <span class="caret"></span>
+                                Add build step <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a href="" ng-click="addChoiceParam()">Choice Parameter</a></li>
-                                <li><a href="" ng-click="addStringParam()">String Parameter</a></li>
+                                [[range .plugins]]
+                                <li><a ng-click="loadPluginSchema('[[.GetName]]', '[[.GetDescription]]')" href="">[[.GetName]] - [[.GetDescription]]</a></li>
+                                [[end]]
                             </ul>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input ng-model="buildRemotely" type="checkbox"> Trigger builds remotely
-                        </label>
+                    <div class="job-buttons form-group well">
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                        <button ng-click="apply()" type="button" class="btn btn-default">Apply</button>
                     </div>
-
-                    <div class="well form-horizontal ng-cloak" ng-if="buildRemotely">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Authentication Token</label>
-                            <div class="col-sm-10">
-                                <input ng-model="job.remote_token" name="remote_token" type="text" class="form-control" />
-                                <small>Use the following URL to trigger build remotely: SCHEDULER_URL/...</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input ng-model="buildPath" type="checkbox"> Set build path
-                        </label>
-                    </div>
-
-                    <div class="well form-horizontal ng-cloak" ng-if="buildPath">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Path</label>
-                            <div class="col-sm-10">
-                                <input ng-model="job.build_path" name="build_path" type="text" class="form-control" />
-                                <small>Folder where project will be build.</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input ng-model="buildPeriodically" type="checkbox"> Build periodically
-                        </label>
-                    </div>
-
-                    <div class="well form-horizontal ng-cloak" ng-if="buildPeriodically">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Schedule</label>
-                            <div class="col-sm-10">
-                                <input ng-model="job.schedule" name="periodical_schedule" type="text" class="form-control" />
-                                <small>Use cron syntax here</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <h2>Build</h2>
-
-                <div ng-repeat="(skey, step) in job.steps" class="well form-horizontal ng-cloak">
-                    <input type="hidden" name="step[{{skey}}][plugin_name]" value="{{step.name}}" />
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <b><span ng-bind="step.name"></span> - <span ng-bind="step.description"></span></b>
-                            <button type="button" ng-click="removeBuildStep(step)" class="btn btn-primary btn-sm pull-right">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div ng-repeat="(pkey, param) in step.schema" class="form-group">
-                        <input type="hidden" name="step[{{skey}}][plugin_params][{{pkey}}][name]" value="{{param.name}}" />
-                        <input type="hidden" name="step[{{skey}}][plugin_params][{{pkey}}][type]" value="{{param.type}}" />
-
-                        <label class="col-sm-2 control-label" ng-bind="param.label"></label>
-                        <div class="col-sm-10">
-                            <input ng-model="param.value" name="step[{{skey}}][plugin_params][{{pkey}}][value]" ng-if="param.type=='string'" type="text" class="form-control">
-                            <textarea ng-model="param.value" name="step[{{skey}}][plugin_params][{{pkey}}][value]" ng-if="param.type=='text'" class="form-control" rows="3"></textarea>
-                            <select ng-model="param.value" name="step[{{skey}}][plugin_params][{{pkey}}][value]" ng-if="param.type=='select'" class="form-control">
-                                <option ng-repeat="opt in param.options" value="{{opt.value}}" ng-bind="opt.name"></option>
-                            </select>
-                        </div>
-                    </div>
-
-
-                </div>
-
-                <div class="form-group">
-                    <div class="btn-group param-btn">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Add build step <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            [[range .plugins]]
-                            <li><a ng-click="loadPluginSchema('[[.GetName]]', '[[.GetDescription]]')" href="">[[.GetName]] - [[.GetDescription]]</a></li>
-                            [[end]]
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="job-buttons form-group">
-                    <input type="submit" class="btn btn-primary" value="Save" />
-                    <button ng-click="apply()" type="button" class="btn btn-default">Apply</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

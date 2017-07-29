@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="col-lg-2">
         <ul class="nav nav-stacked">
-            <li role="presentation"><a href="#">Build Now</a></li>
+            <li role="presentation"><a href="/a/jobs/build/[[.job.ID]]">Build Now</a></li>
             <li role="presentation"><a href="/a/jobs/edit/[[.job.ID]]">Configure</a></li>
             <li role="presentation"><a href="#">Disable</a></li>
             <li role="presentation"><a href="#">Delete</a></li>
@@ -21,7 +21,80 @@
                 <h4>Build History</h4>
             </div>
             <div class="panel-body">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th>#</th>
+                            <th>Status</th>
+                            <th>CreatedAt</th>
+                            <th>UpdatedAt</th>
+                            <th>Params</th>
+                            <th></th>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        [[range .builds]]
+                            <tr>
+                                <td>[[.Number]]</td>
+                                <td>[[.Status]]</td>
+                                <td>[[time .CreatedAt]]</td>
+                                <td>[[time .UpdatedAt]]</td>
+                                <td></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="#" data-toggle="tooltip" data-placement="top" title="Console Output" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-console"></span>
+                                        </a>
+                                        [[if or (eq .Status "queue") (eq .Status "proceed")]]
+                                        <a href="#" data-toggle="tooltip" data-placement="top" title="Cancel Build" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </a>
+                                        [[end]]
+                                    </div>
+                                </td>
+                            </tr>
+                        [[end]]
+                    </tbody>
+                </table>
 
+                [[if gt .count 1]]
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        [[if not .prevPage]]
+                        <li class="disabled" >
+                            <a href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        [[else]]
+                        <li>
+                            <a href="/a/jobs/status/[[.job.ID]]?page=[[.prevPage]]" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        [[end]]
+
+                        [[$job := .job]]
+                        [[$page := .page]]
+                        [[range $key, $value := .pages]]
+                        <li [[if eq $page $value]] class="active" [[end]]  ><a href="/a/jobs/status/[[$job.ID]]?page=[[$value]]">[[$value]]</a></li>
+                        [[end]]
+                        [[if not .nextPage]]
+                        <li   class="disabled" >
+                            <a href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        [[else]]
+                        <li>
+                            <a href="/a/jobs/status/[[.job.ID]]?page=[[.nextPage]]" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        [[end]]
+                    </ul>
+                </nav>
+                [[end]]
             </div>
         </div>
     </div>

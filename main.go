@@ -16,6 +16,8 @@ import (
 	"github.com/mattes/migrate"
 	_ "github.com/mattes/migrate/database/postgres"
 	_ "github.com/mattes/migrate/source/file"
+	"strings"
+	"time"
 )
 
 var (
@@ -67,6 +69,7 @@ func init() {
 }
 
 func main() {
+	//TODO: refactor this
 	db, err := gorm.Open("postgres",
 		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
 			conf.DB.User, conf.DB.Password, conf.DB.Host, conf.DB.Port, conf.DB.Name))
@@ -75,10 +78,17 @@ func main() {
 	}
 
 	router := gin.New()
-	router.Use(gin.Logger(), gin.Recovery(), user.Middleware(db))
+	router.Use( /*gin.Logger(), */ gin.Recovery(), user.Middleware(db))
 
 	router.Static("/assets", "./_assets")
-	tpl := template.New("app").Delims("[[", "]]")
+	tpl := template.New("app").Delims("[[", "]]").Funcs(map[string]interface{}{
+		"split": func(s string) []string {
+			return strings.Split(s, "\n")
+		},
+		"time": func(t time.Time) string {
+			return t.Format("2.01.2006 15:04:05")
+		},
+	})
 	if _, err := tpl.ParseGlob("_templates/**/*"); err != nil {
 		log.Fatalln(err)
 	}
