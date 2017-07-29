@@ -13,7 +13,7 @@ CREATE TABLE "job" (
   deleted_at timestamp without time zone
 );
 
-CREATE TYPE "job_build_status" AS ENUM ('queue', 'proceed', 'success', 'failure');
+CREATE TYPE "job_build_status" AS ENUM ('queue', 'proceed', 'success', 'failure', 'cancel');
 
 CREATE TABLE job_build (
   id SERIAL PRIMARY KEY,

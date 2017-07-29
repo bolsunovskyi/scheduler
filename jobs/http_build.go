@@ -8,6 +8,12 @@ import (
 	"net/http"
 )
 
+func makeCancelHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+	}
+}
+
 func makeBuildGetHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		j, err := getJobByID(db, c.Param("id"))
