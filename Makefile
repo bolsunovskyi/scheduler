@@ -5,6 +5,7 @@ run: scheduler
 
 scheduler: plugin
 	$(call blue, "Build scheduler...")
+	go get
 	go build -a -o scheduler .
 
 plugin: clean

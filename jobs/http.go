@@ -20,5 +20,7 @@ func Init(r *gin.RouterGroup, db *gorm.DB, loadedPlugins []plugins.Item) error {
 	r.GET("/jobs/build/:id", makeBuildGetHandler(db))
 	r.POST("/jobs/build/:id", makeBuildPostHandler(db))
 
+	go parseBuildQueue()
+
 	return nil
 }

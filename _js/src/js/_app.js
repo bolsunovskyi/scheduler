@@ -1,7 +1,7 @@
 angular.module('app', [
     'ngAnimate',
     'ngResource',
-    'ui.bootstrap',
+    // 'ui.bootstrap',
     'ngRoute',
     'angular-loading-bar',
     'cfp.loadingBar'

@@ -18,3 +18,6 @@ run postgres:
     
 ## TODO
 - fix login form
+- use this for cron https://godoc.org/github.com/robfig/cron
+- add session cleaner
+- implement db logger

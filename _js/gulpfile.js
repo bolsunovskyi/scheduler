@@ -8,8 +8,8 @@ var src = [
     './node_modules/angular-route/angular-route.min.js',
     './node_modules/angular-resource/angular-resource.min.js',
     './node_modules/bootstrap/dist/js/bootstrap.min.js',
-    './node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js',
-    './node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+    // './node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js',
+    // './node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
     './node_modules/angular-loading-bar/build/loading-bar.min.js',
     './src/js/**/*.js'
 ];
