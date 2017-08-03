@@ -1,13 +1,14 @@
 package user
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/go-playground/validator.v9"
-	"net/http"
-	"time"
 )
 
 type loginRequest struct {
@@ -61,7 +62,15 @@ func makeLoginFunc(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func InitHTTP(r *gin.Engine, db *gorm.DB) {
+func Init(r *gin.Engine, db *gorm.DB, adminEmail, adminPassword string) error {
+	if err := db.AutoMigrate(&Model{}, &Session{}).Error; err != nil {
+		return err
+	}
+
+	if err := createAdmin(db, adminEmail, adminPassword); err != nil {
+		return err
+	}
+
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusNotFound, "404", gin.H{})
 	})
@@ -81,4 +90,6 @@ func InitHTTP(r *gin.Engine, db *gorm.DB) {
 		c.SetCookie("session", "", -10, "/", "", false, false)
 		c.Redirect(http.StatusSeeOther, "/")
 	})
+
+	return nil
 }

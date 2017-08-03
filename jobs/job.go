@@ -2,10 +2,11 @@ package jobs
 
 import (
 	"encoding/json"
-	"github.com/bolsunovskyi/scheduler/plugins"
-	"github.com/jinzhu/gorm"
 	"strconv"
 	"time"
+
+	"github.com/bolsunovskyi/scheduler/plugins"
+	"github.com/jinzhu/gorm"
 )
 
 type Model struct {
@@ -40,7 +41,7 @@ type Tab struct {
 	Name string
 }
 
-type TabJon struct {
+type TabJob struct {
 	TabID    int
 	JobID    int
 	Position int

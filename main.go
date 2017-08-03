@@ -16,7 +16,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/mattes/migrate"
 	_ "github.com/mattes/migrate/database/postgres"
 	_ "github.com/mattes/migrate/source/file"
 )
@@ -57,18 +56,18 @@ func init() {
 		log.Fatalln(err)
 	}
 
-	m, err := migrate.New(
-		"file://_migrations",
-		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-			conf.DB.User, conf.DB.Password, conf.DB.Host, conf.DB.Port, conf.DB.Name))
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatalln(err)
-	}
+	//m, err := migrate.New(
+	//	"file://_migrations",
+	//	fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+	//		conf.DB.User, conf.DB.Password, conf.DB.Host, conf.DB.Port, conf.DB.Name))
+	//
+	//if err != nil {
+	//	log.Fatalln(err)
+	//}
+	//
+	//if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	//	log.Fatalln(err)
+	//}
 }
 
 func main() {
@@ -83,7 +82,7 @@ func main() {
 			return
 		}
 	} else if conf.DB.Type == "sqlite3" {
-
+		db, err = gorm.Open("sqlite3", conf.DB.Path)
 	}
 
 	router := gin.New()
@@ -102,15 +101,16 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	user.CreateAdmin(db, conf.Admin.Email, conf.Admin.Password)
-	user.InitHTTP(router, db)
+	if err := user.Init(router, db, conf.Admin.Email, conf.Admin.Password); err != nil {
+		log.Fatalln(err)
+	}
 
 	auth := router.Group("/a")
 	auth.Use(user.AbortUnAuth())
 
 	loadedPlugins := plugins.Load(db, tpl, auth.Group("/plugins"), conf.Plugins)
 
-	jobs.InitHTTP(auth, db, loadedPlugins)
+	jobs.Init(auth, db, loadedPlugins)
 	plugins.InitHTTP(auth, db, loadedPlugins)
 
 	router.SetHTMLTemplate(tpl)

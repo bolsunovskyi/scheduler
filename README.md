@@ -13,3 +13,8 @@ run postgres:
     
 ## Build plugin
     `go build -buildmode=plugin`
+    
+    
+    
+## TODO
+- fix login form

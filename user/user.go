@@ -1,9 +1,10 @@
 package user
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 type Model struct {
@@ -34,7 +35,7 @@ func (Session) TableName() string {
 	return "session"
 }
 
-func CreateAdmin(db *gorm.DB, email, password string) error {
+func createAdmin(db *gorm.DB, email, password string) error {
 	pwd, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
