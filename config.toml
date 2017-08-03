@@ -4,6 +4,8 @@ plugins = ["ssh", "shell"]
 default_build_path = "/tmp/"
 
 [db]
+type = "sqlite3"
+path = "db.sql"
 host = "localhost"
 port = 5434
 name = "postgres"

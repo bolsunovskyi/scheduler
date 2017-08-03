@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"strings"
+	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/bolsunovskyi/scheduler/jobs"
@@ -13,11 +15,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/mattes/migrate"
 	_ "github.com/mattes/migrate/database/postgres"
 	_ "github.com/mattes/migrate/source/file"
-	"strings"
-	"time"
 )
 
 var (
@@ -26,6 +27,8 @@ var (
 )
 
 type database struct {
+	Type     string
+	Path     string
 	Name     string
 	Host     string
 	Port     int
@@ -70,11 +73,17 @@ func init() {
 
 func main() {
 	//TODO: refactor this
-	db, err := gorm.Open("postgres",
-		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-			conf.DB.User, conf.DB.Password, conf.DB.Host, conf.DB.Port, conf.DB.Name))
-	if err != nil {
-		return
+	var db *gorm.DB
+	var err error
+	if conf.DB.Type == "postgres" {
+		db, err = gorm.Open("postgres",
+			fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+				conf.DB.User, conf.DB.Password, conf.DB.Host, conf.DB.Port, conf.DB.Name))
+		if err != nil {
+			return
+		}
+	} else if conf.DB.Type == "sqlite3" {
+
 	}
 
 	router := gin.New()
