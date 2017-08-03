@@ -34,8 +34,9 @@ func makeEditGetHandler(db *gorm.DB, loadedPlugins []plugins.Item) gin.HandlerFu
 		}
 
 		c.HTML(http.StatusOK, "jobs/create.html", gin.H{
-			"plugins": loadedPlugins,
-			"job":     j,
+			"plugins":      loadedPlugins,
+			"job":          j,
+			"editControls": true,
 		})
 	}
 }

@@ -1,14 +1,16 @@
 [[ define "jobs/create.html" ]][[ template "header" ]]
 [[ template "navbar" ]]
-
+<div ng-app="app">
 <div class="container-fluid" ng-controller="job">
     <div class="col-xs-2">
         <ul class="nav nav-stacked configure-nav">
+            [[if .editControls]]
             <li role="presentation"><a href="/a/jobs/status/[[.job.ID]]">Status</a></li>
             <li role="presentation"><a href="/a/jobs/build/[[.job.ID]]">Build</a></li>
             <li role="presentation"><a href="#">Disable</a></li>
             <li role="presentation"><a href="#">Delete</a></li>
             <hr />
+            [[end]]
             <li role="presentation"><a href="" ng-click="apply()">Apply</a></li>
             <li role="presentation"><a href="" ng-click="formSubmit()">Save</a></li>
         </ul>
@@ -225,6 +227,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 [[ template "footer" ]]
