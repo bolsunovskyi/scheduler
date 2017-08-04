@@ -3,11 +3,11 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/smhouse/pi/db"
 	"log"
 	"sync"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 const (
