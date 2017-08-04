@@ -21,3 +21,5 @@ run postgres:
 - use this for cron https://godoc.org/github.com/robfig/cron
 - add session cleaner
 - implement db logger
+- Change style from red to blue
+- Bold for build button
