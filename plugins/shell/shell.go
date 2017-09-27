@@ -1,38 +1,51 @@
 package main
 
 import (
+	"net/rpc/jsonrpc"
+
 	"github.com/bolsunovskyi/scheduler/plugins"
+	"github.com/natefinch/pie"
+	"github.com/prometheus/common/log"
 )
 
 type Shell struct {
 }
 
-func MakePlugin(params map[string]interface{}) plugins.Item {
-	return Shell{}
+func (Shell) GetName(_ string, rsp *string) error {
+	*rsp = "shell"
+	return nil
 }
 
-func (Shell) GetName() string {
-	return "shell"
+func (Shell) GetDescription(_ string, rsp *string) error {
+	*rsp = "Execute shell commands"
+	return nil
 }
 
-func (Shell) GetDescription() string {
-	return "Execute shell commands"
+func (Shell) GetVersion(_ string, rsp *string) error {
+	*rsp = "1.0"
+	return nil
 }
 
-func (Shell) GetVersion() string {
-	return "1.0"
-}
-
-func (Shell) GetBuildParams() []plugins.ItemParam {
-	return []plugins.ItemParam{
+func (Shell) GetBuildParams(_ string, rsp *[]plugins.ItemParam) error {
+	*rsp = []plugins.ItemParam{
 		{
 			Label: "Command",
 			Name:  "command",
 			Type:  plugins.TypeText,
 		},
 	}
+	return nil
 }
 
-func (Shell) HasSettings() bool {
-	return false
+func (Shell) HasSettings(_ string, rsp *bool) error {
+	*rsp = false
+	return nil
+}
+
+func main() {
+	p := pie.NewProvider()
+	if err := p.RegisterName("shell", Shell{}); err != nil {
+		log.Fatalln(err)
+	}
+	p.ServeCodec(jsonrpc.NewServerCodec)
 }
