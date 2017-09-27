@@ -11,6 +11,11 @@ import (
 type Shell struct {
 }
 
+func (Shell) InitPlugin(params map[string]interface{}, rsp *bool) error {
+	*rsp = true
+	return nil
+}
+
 func (Shell) GetName(_ string, rsp *string) error {
 	*rsp = "shell"
 	return nil

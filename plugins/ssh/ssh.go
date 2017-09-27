@@ -14,20 +14,21 @@ type SSH struct {
 	db     *gorm.DB
 }
 
-func MakePlugin(params map[string]interface{}) plugins.Item {
-	ssh := SSH{
-		router: params["router"].(*gin.RouterGroup),
-		db:     params["db"].(*gorm.DB),
-	}
+//func MakePlugin(params map[string]interface{}) plugins.Item {
+//	ssh := SSH{
+//		router: params["router"].(*gin.RouterGroup),
+//		db:     params["db"].(*gorm.DB),
+//	}
+//
+//	ssh.migrateDB()
+//	ssh.initHTTP()
+//
+//	return ssh
+//}
 
-	ssh.migrateDB()
-	ssh.initHTTP()
-
-	return ssh
-}
-
-func (SSH) GetName() string {
-	return "ssh"
+func (SSH) GetName(_ string, rsp *string) error {
+	*rsp = "ssh"
+	return nil
 }
 
 func (SSH) GetDescription() string {

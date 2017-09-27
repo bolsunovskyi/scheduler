@@ -46,4 +46,13 @@ func TestShell_GetParams(t *testing.T) {
 		t.Error(err)
 		return
 	}
+
+	initPlugin := map[string]interface{}{
+		"foo": 125,
+	}
+
+	if err := client.Call("shell.InitPlugin", initPlugin, &bParam); err != nil {
+		t.Error(err)
+		return
+	}
 }
