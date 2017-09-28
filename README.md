@@ -17,6 +17,7 @@ run postgres:
     
     
 ## TODO
+- try another serialization (gobin)
 - fix login form
 - use this for cron https://godoc.org/github.com/robfig/cron
 - add session cleaner
