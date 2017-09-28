@@ -25,6 +25,6 @@ func (Credential) TableName() string {
 	return "ssh_credential"
 }
 
-func (s SSH) migrateDB() {
-	s.db.AutoMigrate(&Credential{}, &Server{})
+func (s SSH) migrateDB() error {
+	return s.db.AutoMigrate(&Credential{}, &Server{}).Error
 }

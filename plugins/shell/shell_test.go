@@ -6,6 +6,9 @@ import (
 	"testing"
 
 	"github.com/bolsunovskyi/scheduler/plugins"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/natefinch/pie"
 )
 
@@ -19,24 +22,8 @@ func TestShell_GetParams(t *testing.T) {
 	}
 	defer client.Close()
 
-	var param string
-	if err := client.Call("shell.GetName", "", &param); err != nil {
-		t.Error(err)
-		return
-	}
-
-	if err := client.Call("shell.GetDescription", "", &param); err != nil {
-		t.Error(err)
-		return
-	}
-
-	if err := client.Call("shell.GetVersion", "", &param); err != nil {
-		t.Error(err)
-		return
-	}
-
-	var bParam bool
-	if err := client.Call("shell.HasSettings", "", &bParam); err != nil {
+	var params plugins.PluginParams
+	if err := client.Call("shell.GetPluginParams", "", &params); err != nil {
 		t.Error(err)
 		return
 	}
@@ -47,11 +34,21 @@ func TestShell_GetParams(t *testing.T) {
 		return
 	}
 
-	initPlugin := map[string]interface{}{
-		"foo": 125,
+	group := gin.New().Group("/test")
+	if err := client.Call("shell.InitRouter", "", group); err != nil {
+		t.Error(err)
+		return
 	}
 
-	if err := client.Call("shell.InitPlugin", initPlugin, &bParam); err != nil {
+	dbPath := "/tmp/test.sqlite"
+	db, err := gorm.Open("sqlite3", dbPath)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	defer os.Remove(path)
+
+	if err := client.Call("shell.InitDB", "", db); err != nil {
 		t.Error(err)
 		return
 	}

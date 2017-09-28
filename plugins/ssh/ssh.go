@@ -1,12 +1,15 @@
 package main
 
 import (
+	"errors"
 	"log"
+	"net/rpc/jsonrpc"
 	"strconv"
 
 	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/natefinch/pie"
 )
 
 type SSH struct {
@@ -14,35 +17,36 @@ type SSH struct {
 	db     *gorm.DB
 }
 
-//func MakePlugin(params map[string]interface{}) plugins.Item {
-//	ssh := SSH{
-//		router: params["router"].(*gin.RouterGroup),
-//		db:     params["db"].(*gorm.DB),
-//	}
-//
-//	ssh.migrateDB()
-//	ssh.initHTTP()
-//
-//	return ssh
-//}
+func (s SSH) InitDB(_ string, db *gorm.DB) error {
+	s.db = db
+	return s.migrateDB()
+}
 
-func (SSH) GetName(_ string, rsp *string) error {
-	*rsp = "ssh"
+func (s SSH) InitRouter(_ string, router *gin.RouterGroup) error {
+	s.router = router
+	s.initHTTP()
 	return nil
 }
 
-func (SSH) GetDescription() string {
-	return "Send files or execute commands over SSH"
+func (SSH) GetPluginParams(_ string, params *plugins.PluginParams) error {
+	*params = plugins.PluginParams{
+		Name:        "ssh",
+		Description: "Send files or execute commands over SSH",
+		Version:     "1.0",
+		HasSettings: true,
+	}
+	return nil
 }
 
-func (SSH) GetVersion() string {
-	return "1.0"
-}
+func (s SSH) GetBuildParams(_ string, rsp *[]plugins.ItemParam) error {
+	if s.db == nil {
+		return errors.New("The database was not initialized")
+		//s.db = &db
+	}
 
-func (s SSH) GetBuildParams() []plugins.ItemParam {
 	var servers []Server
 	if err := s.db.Find(&servers).Error; err != nil {
-		log.Println(err)
+		return err
 	}
 	var paramOptions []plugins.ParamOptions
 	for _, s := range servers {
@@ -52,7 +56,7 @@ func (s SSH) GetBuildParams() []plugins.ItemParam {
 		})
 	}
 
-	return []plugins.ItemParam{
+	*rsp = []plugins.ItemParam{
 		{
 			Name:    "server",
 			Label:   "Server",
@@ -75,8 +79,13 @@ func (s SSH) GetBuildParams() []plugins.ItemParam {
 			Type:  plugins.TypeText,
 		},
 	}
+	return nil
 }
 
-func (SSH) HasSettings() bool {
-	return true
+func main() {
+	p := pie.NewProvider()
+	if err := p.RegisterName("ssh", SSH{}); err != nil {
+		log.Fatalln(err)
+	}
+	p.ServeCodec(jsonrpc.NewServerCodec)
 }

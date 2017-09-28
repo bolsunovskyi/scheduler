@@ -4,6 +4,8 @@ import (
 	"net/rpc/jsonrpc"
 
 	"github.com/bolsunovskyi/scheduler/plugins"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"github.com/natefinch/pie"
 	"github.com/prometheus/common/log"
 )
@@ -11,23 +13,21 @@ import (
 type Shell struct {
 }
 
-func (Shell) InitPlugin(params map[string]interface{}, rsp *bool) error {
-	*rsp = true
+func (Shell) InitDB(_ string, db *gorm.DB) error {
 	return nil
 }
 
-func (Shell) GetName(_ string, rsp *string) error {
-	*rsp = "shell"
+func (Shell) InitRouter(_ string, router *gin.RouterGroup) error {
 	return nil
 }
 
-func (Shell) GetDescription(_ string, rsp *string) error {
-	*rsp = "Execute shell commands"
-	return nil
-}
-
-func (Shell) GetVersion(_ string, rsp *string) error {
-	*rsp = "1.0"
+func (Shell) GetPluginParams(_ string, params *plugins.PluginParams) error {
+	*params = plugins.PluginParams{
+		Name:        "shell",
+		Description: "Execute shell commands",
+		Version:     "1.0",
+		HasSettings: false,
+	}
 	return nil
 }
 
@@ -39,11 +39,6 @@ func (Shell) GetBuildParams(_ string, rsp *[]plugins.ItemParam) error {
 			Type:  plugins.TypeText,
 		},
 	}
-	return nil
-}
-
-func (Shell) HasSettings(_ string, rsp *bool) error {
-	*rsp = false
 	return nil
 }
 

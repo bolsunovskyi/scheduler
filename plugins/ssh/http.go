@@ -91,12 +91,6 @@ func (s SSH) initHTTP() {
 		}
 
 		var servers []Server
-		//if err := s.db.Find(&servers).Error; err != nil {
-		//	c.HTML(http.StatusOK, "ssh/index.html", gin.H{
-		//		"error": err.Error(),
-		//	})
-		//	return
-		//}
 
 		serverTbl := Server{}.TableName()
 		credTbl := Credential{}.TableName()
