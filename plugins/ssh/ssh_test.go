@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/rpc/jsonrpc"
 	"os"
 	"testing"
 
@@ -14,7 +13,7 @@ import (
 func TestShell_GetParams(t *testing.T) {
 	path := "./ssh"
 
-	client, err := pie.StartProviderCodec(jsonrpc.NewClientCodec, os.Stderr, path)
+	client, err := pie.StartProvider(os.Stderr, path)
 	if err != nil {
 		t.Error(err)
 		return
@@ -35,7 +34,7 @@ func TestShell_GetParams(t *testing.T) {
 	}
 	defer os.Remove(path)
 
-	if err := client.Call("ssh.InitDB", "", db); err != nil {
+	if err := client.Call("ssh.InitDB", *db, db); err != nil {
 		t.Error(err)
 		return
 	}

@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"log"
 
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
@@ -44,7 +46,7 @@ type ParamOptions struct {
 	Value string `json:"value"`
 }
 
-func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, items []string) []Item {
+func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, items []string, dbPath string) []Item {
 	var loadedItems []Item
 
 	//params := map[string]interface{}{
@@ -54,6 +56,10 @@ func Load(db *gorm.DB, baseTemplate *template.Template, group *gin.RouterGroup, 
 	log.Println("Loading plugins...")
 	for _, item := range items {
 		log.Printf("Load plugin %s ...\n", item)
+
+		group.Group(fmt.Sprintf("/%s", item), func(c *gin.Context) {
+			//Call plugin http handler
+		})
 
 		//p, err := plugin.Open(fmt.Sprintf("./plugins/%s/%s.so", item, item))
 		//if err != nil {

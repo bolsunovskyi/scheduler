@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"log"
-	"net/rpc/jsonrpc"
 	"strconv"
 
 	"github.com/bolsunovskyi/scheduler/plugins"
@@ -17,9 +16,14 @@ type SSH struct {
 	db     *gorm.DB
 }
 
-func (s SSH) InitDB(_ string, db *gorm.DB) error {
-	s.db = db
-	return s.migrateDB()
+func (s SSH) InitDB(in gorm.DB, out *gorm.DB) error {
+	s.db = &in
+	if err := s.migrateDB(); err != nil {
+		return err
+	}
+
+	out = s.db
+	return nil
 }
 
 func (s SSH) InitRouter(_ string, router *gin.RouterGroup) error {
@@ -87,5 +91,6 @@ func main() {
 	if err := p.RegisterName("ssh", SSH{}); err != nil {
 		log.Fatalln(err)
 	}
-	p.ServeCodec(jsonrpc.NewServerCodec)
+	//p.ServeCodec(jsonrpc.NewServerCodec)
+	p.Serve()
 }

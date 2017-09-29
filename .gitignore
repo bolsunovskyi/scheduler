@@ -2,3 +2,6 @@ node_modules/
 scheduler
 .idea
 *.so
+db.sql
+plugins/ssh/ssh
+plugins/shell/shell
