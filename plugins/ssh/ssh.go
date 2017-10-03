@@ -1,14 +1,15 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"strconv"
 
 	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/natefinch/pie"
+	"net/rpc/jsonrpc"
 )
 
 type SSH struct {
@@ -16,19 +17,21 @@ type SSH struct {
 	db     *gorm.DB
 }
 
-func (s SSH) InitDB(in gorm.DB, out *gorm.DB) error {
-	s.db = &in
+func (s SSH) InitDB(dbPath string, _ *string) error {
+	db, err := gorm.Open("sqlite3", dbPath)
+	if err != nil {
+		return err
+	}
+
+	s.db = db
 	if err := s.migrateDB(); err != nil {
 		return err
 	}
 
-	out = s.db
 	return nil
 }
 
-func (s SSH) InitRouter(_ string, router *gin.RouterGroup) error {
-	s.router = router
-	s.initHTTP()
+func (s SSH) HandleHTTP(rq plugins.HTTPRequest, rsp *plugins.HTTPResponse) error {
 	return nil
 }
 
@@ -42,10 +45,13 @@ func (SSH) GetPluginParams(_ string, params *plugins.PluginParams) error {
 	return nil
 }
 
-func (s SSH) GetBuildParams(_ string, rsp *[]plugins.ItemParam) error {
+func (s SSH) GetBuildParams(dbPath string, rsp *[]plugins.ItemParam) error {
 	if s.db == nil {
-		return errors.New("The database was not initialized")
-		//s.db = &db
+		db, err := gorm.Open("sqlite3", dbPath)
+		if err != nil {
+			return err
+		}
+		s.db = db
 	}
 
 	var servers []Server
@@ -91,6 +97,6 @@ func main() {
 	if err := p.RegisterName("ssh", SSH{}); err != nil {
 		log.Fatalln(err)
 	}
-	//p.ServeCodec(jsonrpc.NewServerCodec)
+	p.ServeCodec(jsonrpc.NewServerCodec)
 	p.Serve()
 }

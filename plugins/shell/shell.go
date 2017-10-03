@@ -4,8 +4,6 @@ import (
 	"net/rpc/jsonrpc"
 
 	"github.com/bolsunovskyi/scheduler/plugins"
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"github.com/natefinch/pie"
 	"github.com/prometheus/common/log"
 )
@@ -13,11 +11,16 @@ import (
 type Shell struct {
 }
 
-func (Shell) InitDB(_ string, db *gorm.DB) error {
+func (Shell) InitDB(path string, _ *string) error {
 	return nil
 }
 
-func (Shell) InitRouter(_ string, router *gin.RouterGroup) error {
+func (Shell) HandleHTTP(request plugins.HTTPRequest, rsp *plugins.HTTPResponse) error {
+	rsp.Template = request.BodyStr
+	rsp.Data = map[string]interface{}{
+		"method": request.Method,
+	}
+
 	return nil
 }
 

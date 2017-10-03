@@ -86,7 +86,7 @@ func main() {
 	auth.Use(user.AbortUnAuth())
 
 	//load plugins
-	loadedPlugins := plugins.Load(db, tpl, auth.Group("/plugins"), conf.Plugins, conf.DBPath)
+	loadedPlugins := plugins.Load(tpl, auth.Group("/plugins"), conf.Plugins, conf.DBPath)
 
 	//init jobs package
 	jobs.Init(auth, db, loadedPlugins)
