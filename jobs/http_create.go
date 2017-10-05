@@ -39,7 +39,7 @@ func makeCreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func makeCreateGetHandler(loadedPlugins []plugins.Item) gin.HandlerFunc {
+func makeCreateGetHandler(loadedPlugins []plugins.Params) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.HTML(http.StatusOK, "jobs/create.html", gin.H{
 			"plugins": loadedPlugins,

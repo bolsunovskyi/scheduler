@@ -1,15 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
+	"net/http/httptest"
+	"net/rpc/jsonrpc"
 	"strconv"
+	"strings"
 
 	"github.com/bolsunovskyi/scheduler/plugins"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/natefinch/pie"
-	"net/rpc/jsonrpc"
 )
 
 type SSH struct {
@@ -18,12 +22,15 @@ type SSH struct {
 }
 
 func (s SSH) InitDB(dbPath string, _ *string) error {
-	db, err := gorm.Open("sqlite3", dbPath)
-	if err != nil {
-		return err
+	if s.db == nil {
+		db, err := gorm.Open("sqlite3", dbPath)
+		if err != nil {
+			return err
+		}
+
+		s.db = db
 	}
 
-	s.db = db
 	if err := s.migrateDB(); err != nil {
 		return err
 	}
@@ -32,20 +39,31 @@ func (s SSH) InitDB(dbPath string, _ *string) error {
 }
 
 func (s SSH) HandleHTTP(rq plugins.HTTPRequest, rsp *plugins.HTTPResponse) error {
-	return nil
-}
-
-func (SSH) GetPluginParams(_ string, params *plugins.PluginParams) error {
-	*params = plugins.PluginParams{
-		Name:        "ssh",
-		Description: "Send files or execute commands over SSH",
-		Version:     "1.0",
-		HasSettings: true,
+	hrq, err := http.NewRequest(rq.Method, rq.URL.Path, strings.NewReader(rq.BodyStr))
+	if err != nil {
+		return err
 	}
+
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
+	r.NoRoute(func(c *gin.Context) {
+		c.String(404, fmt.Sprintf("Path [%s] not found", c.Request.URL.Path))
+	})
+
+	s.router = r.Group("/a/plugins/ssh")
+
+	rr := httptest.NewRecorder()
+
+	r.ServeHTTP(rr, hrq)
+
+	rsp.StatusCode = rr.Code
+	rsp.RawBody = rr.Body.String()
+	rsp.Raw = true
+
 	return nil
 }
 
-func (s SSH) GetBuildParams(dbPath string, rsp *[]plugins.ItemParam) error {
+func (s SSH) GetPluginParams(dbPath string, params *plugins.Params) error {
 	if s.db == nil {
 		db, err := gorm.Open("sqlite3", dbPath)
 		if err != nil {
@@ -58,37 +76,44 @@ func (s SSH) GetBuildParams(dbPath string, rsp *[]plugins.ItemParam) error {
 	if err := s.db.Find(&servers).Error; err != nil {
 		return err
 	}
-	var paramOptions []plugins.ParamOptions
+	var paramOptions []plugins.BuildStepOptions
 	for _, s := range servers {
-		paramOptions = append(paramOptions, plugins.ParamOptions{
+		paramOptions = append(paramOptions, plugins.BuildStepOptions{
 			Name:  s.Name,
 			Value: strconv.Itoa(s.ID),
 		})
 	}
 
-	*rsp = []plugins.ItemParam{
-		{
-			Name:    "server",
-			Label:   "Server",
-			Type:    plugins.TypeSelect,
-			Options: paramOptions,
-		},
-		{
-			Name:  "files",
-			Label: "Files to send",
-			Type:  plugins.TypeString,
-		},
-		{
-			Name:  "remote_dir",
-			Label: "Remote directory",
-			Type:  plugins.TypeString,
-		},
-		{
-			Name:  "command",
-			Label: "Command",
-			Type:  plugins.TypeText,
+	*params = plugins.Params{
+		Name:        "ssh",
+		Description: "Send files or execute commands over SSH",
+		Version:     "1.0",
+		HasSettings: true,
+		BuildSteps: []plugins.BuildStep{
+			{
+				Name:    "server",
+				Label:   "Server",
+				Type:    plugins.TypeSelect,
+				Options: paramOptions,
+			},
+			{
+				Name:  "files",
+				Label: "Files to send",
+				Type:  plugins.TypeString,
+			},
+			{
+				Name:  "remote_dir",
+				Label: "Remote directory",
+				Type:  plugins.TypeString,
+			},
+			{
+				Name:  "command",
+				Label: "Command",
+				Type:  plugins.TypeText,
+			},
 		},
 	}
+
 	return nil
 }
 

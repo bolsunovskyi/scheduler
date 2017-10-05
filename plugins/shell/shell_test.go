@@ -1,16 +1,17 @@
 package main
 
 import (
-	"github.com/bolsunovskyi/scheduler/plugins"
-	"github.com/gin-gonic/gin"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/natefinch/pie"
 	"net/http"
 	"net/http/httptest"
 	"net/rpc/jsonrpc"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/bolsunovskyi/scheduler/plugins"
+	"github.com/gin-gonic/gin"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/natefinch/pie"
 )
 
 func TestShell_HandleHTTP(t *testing.T) {
@@ -91,7 +92,7 @@ func TestShell_GetParams(t *testing.T) {
 		return
 	}
 
-	var itemParam []plugins.ItemParam
+	var itemParam []plugins.PluginBuildParam
 	if err := client.Call("shell.GetBuildParams", "", &itemParam); err != nil {
 		t.Error(err)
 		return

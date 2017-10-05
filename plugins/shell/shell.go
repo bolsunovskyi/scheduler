@@ -24,22 +24,18 @@ func (Shell) HandleHTTP(request plugins.HTTPRequest, rsp *plugins.HTTPResponse) 
 	return nil
 }
 
-func (Shell) GetPluginParams(_ string, params *plugins.PluginParams) error {
-	*params = plugins.PluginParams{
+func (Shell) GetPluginParams(_ string, params *plugins.Params) error {
+	*params = plugins.Params{
 		Name:        "shell",
 		Description: "Execute shell commands",
 		Version:     "1.0",
 		HasSettings: false,
-	}
-	return nil
-}
-
-func (Shell) GetBuildParams(_ string, rsp *[]plugins.ItemParam) error {
-	*rsp = []plugins.ItemParam{
-		{
-			Label: "Command",
-			Name:  "command",
-			Type:  plugins.TypeText,
+		BuildSteps: []plugins.BuildStep{
+			{
+				Label: "Command",
+				Name:  "command",
+				Type:  plugins.TypeText,
+			},
 		},
 	}
 	return nil

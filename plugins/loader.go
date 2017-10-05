@@ -1,20 +1,19 @@
 package plugins
 
 import (
-	"html/template"
-	"log"
-
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	"github.com/natefinch/pie"
+	"html/template"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"net/rpc/jsonrpc"
 	"net/url"
 	"os"
 	"runtime"
+
+	"github.com/gin-gonic/gin"
+	"github.com/natefinch/pie"
 )
 
 const (
@@ -23,29 +22,26 @@ const (
 	TypeSelect = "select"
 )
 
-type Item interface {
-	GetName(_ string, rsp *string) error
-	GetDescription(_ string, rsp *string) error
-	GetVersion(_ string, rsp *string) error
-	GetBuildParams(_ string, rsp *[]ItemParam) error
-	HasSettings(_ string, rsp *bool) error
-	InitPlugin(params map[string]interface{}, rsp Item) error
+type BuildStep struct {
+	Name        string             `json:"name"`
+	Label       string             `json:"label"`
+	Type        string             `json:"type"`
+	Description string             `json:"description"`
+	Options     []BuildStepOptions `json:"options"`
+	Value       string             `json:"value"`
 }
 
-type ItemParam struct {
-	Name        string         `json:"name"`
-	Label       string         `json:"label"`
-	Type        string         `json:"type"`
-	Description string         `json:"description"`
-	Options     []ParamOptions `json:"options"`
-	Value       string         `json:"value"`
+type BuildStepOptions struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
-type PluginParams struct {
+type Params struct {
 	Name        string
 	Description string
 	Version     string
 	HasSettings bool
+	BuildSteps  []BuildStep
 }
 
 type HTTPRequest struct {
@@ -100,15 +96,13 @@ type HTTPResponse struct {
 	Data       map[string]interface{}
 	Template   string
 	Json       bool
-}
-
-type ParamOptions struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Raw        bool
+	RawBody    string
 }
 
 func makePluginHTTPHandler(pluginName string, group *gin.RouterGroup, dbPath string) {
-	group.Group(fmt.Sprintf("/%s", pluginName), func(c *gin.Context) {
+	pluginGroup := group.Group(fmt.Sprintf("/%s", pluginName))
+	pluginGroup.Any("", func(c *gin.Context) {
 		//Call plugin http handler
 		pluginExec := "./plugins/" + pluginName + "/" + pluginName
 		if runtime.GOOS == "windows" {
@@ -133,11 +127,16 @@ func makePluginHTTPHandler(pluginName string, group *gin.RouterGroup, dbPath str
 			return
 		}
 
-		c.HTML(rsp.StatusCode, rsp.Template, rsp.Data)
+		if rsp.Template != "" {
+			c.HTML(rsp.StatusCode, rsp.Template, rsp.Data)
+			return
+		}
+
+		c.String(rsp.StatusCode, rsp.RawBody)
 	})
 }
 
-func loadPlugin(pluginName string, baseTemplate *template.Template, group *gin.RouterGroup, dbPath string) error {
+func loadPlugin(pluginName string, baseTemplate *template.Template, group *gin.RouterGroup, dbPath string) (*Params, error) {
 	log.Printf("Load plugin %s ...\n", pluginName)
 
 	pluginExec := "./plugins/" + pluginName + "/" + pluginName
@@ -147,12 +146,12 @@ func loadPlugin(pluginName string, baseTemplate *template.Template, group *gin.R
 
 	client, err := pie.StartProviderCodec(jsonrpc.NewClientCodec, os.Stdout, pluginExec)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer client.Close()
 
 	if err := client.Call(pluginName+".InitDB", dbPath, nil); err != nil {
-		return err
+		return nil, err
 	}
 
 	//make http handler
@@ -170,30 +169,31 @@ func loadPlugin(pluginName string, baseTemplate *template.Template, group *gin.R
 		group.Static(fmt.Sprintf("%s/assets/", pluginName), fmt.Sprintf("./plugins/%s/_assets", pluginName))
 	}
 
-	var params PluginParams
-	if err := client.Call(pluginName+".GetPluginParams", "", &params); err != nil {
-		return err
+	var params Params
+	if err := client.Call(pluginName+".GetPluginParams", dbPath, &params); err != nil {
+		return nil, err
 	}
 
 	log.Printf("Plugin name: %s\n", params.Name)
 	log.Printf("Plugin description: %s\n", params.Description)
 	log.Printf("Plugin version: %s\n", params.Version)
 
-	return nil
+	return &params, nil
 }
 
-func Load(baseTemplate *template.Template, group *gin.RouterGroup, items []string, dbPath string) []string {
-	var loadedItems []string
+func Load(baseTemplate *template.Template, group *gin.RouterGroup, items []string, dbPath string) []Params {
+	var loadedItems []Params
 
 	log.Println("Loading plugins...")
 	for _, item := range items {
 
-		if err := loadPlugin(item, baseTemplate, group, dbPath); err != nil {
+		params, err := loadPlugin(item, baseTemplate, group, dbPath)
+		if err != nil {
 			log.Println(err)
 			continue
 		}
 
-		loadedItems = append(loadedItems, item)
+		loadedItems = append(loadedItems, *params)
 		log.Printf("Load plugin [%s] done.\n", item)
 	}
 

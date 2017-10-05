@@ -5,18 +5,18 @@ run: scheduler
 
 scheduler: plugin
 	$(call blue, "Build scheduler...")
-	go get
-	go build -a -o scheduler .
+	# go get
+	go build -o scheduler .
 
 plugin: clean
 	$(call blue, "Build plugins...")
-	go build -buildmode=plugin -a -o plugins/ssh/ssh.so github.com/bolsunovskyi/scheduler/plugins/ssh
-	go build -buildmode=plugin -a -o plugins/shell/shell.so github.com/bolsunovskyi/scheduler/plugins/shell
+	go build -o plugins/ssh/ssh github.com/bolsunovskyi/scheduler/plugins/ssh
+	go build -o plugins/shell/shell.so github.com/bolsunovskyi/scheduler/plugins/shell
 
 clean:
 	$(call blue, "Clean work tree...")
-	rm -f plugins/ssh/ssh.so
-	rm -f plugins/shell/shell.so
+	rm -f plugins/ssh/ssh
+	rm -f plugins/shell/shell
 	rm -f ./scheduler
 
 define blue

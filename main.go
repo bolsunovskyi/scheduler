@@ -28,7 +28,7 @@ type admin struct {
 }
 
 type config struct {
-	DBPath           string
+	DBPath           string `toml:"db_path"`
 	Admin            admin
 	Plugins          []string
 	DefaultBuildPath string

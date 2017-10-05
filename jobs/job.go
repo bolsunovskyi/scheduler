@@ -33,7 +33,7 @@ func (Model) TableName() string {
 type Step struct {
 	PluginName  string              `json:"name"`
 	Description string              `json:"description"`
-	Params      []plugins.ItemParam `json:"schema"`
+	Params      []plugins.BuildStep `json:"schema"`
 }
 
 type Tab struct {

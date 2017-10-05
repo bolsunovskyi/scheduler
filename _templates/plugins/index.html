@@ -20,12 +20,12 @@
         <tbody>
             [[range .plugins]]
                 <tr>
-                    <td>[[.GetName]]</td>
-                    <td>[[.GetDescription]]</td>
-                    <td>[[.GetVersion]]</td>
+                    <td>[[.Name]]</td>
+                    <td>[[.Description]]</td>
+                    <td>[[.Version]]</td>
                     <td>
                         [[if .HasSettings]]
-                        <a class="btn btn-default" href="/a/plugins/[[.GetName]]">
+                        <a class="btn btn-default" href="/a/plugins/[[.Name]]">
                             <span class="glyphicon glyphicon-cog"></span>
                         </a>
                         [[end]]

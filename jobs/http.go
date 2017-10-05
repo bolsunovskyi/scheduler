@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func Init(r *gin.RouterGroup, db *gorm.DB, loadedPlugins []plugins.Item) error {
+func Init(r *gin.RouterGroup, db *gorm.DB, loadedPlugins []plugins.Params) error {
 	if err := db.AutoMigrate(&Model{}, &Build{}, &Tab{}).Error; err != nil {
 		return err
 	}
