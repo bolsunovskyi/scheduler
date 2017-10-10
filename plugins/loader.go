@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -65,10 +66,8 @@ type HTTPRequest struct {
 }
 
 func MakeRequest(rq *http.Request, dbPath string) HTTPRequest {
-	rq.ParseForm()
-	rq.ParseMultipartForm(32 << 20) //
-
 	bts, _ := ioutil.ReadAll(rq.Body)
+	rq.Body = ioutil.NopCloser(bytes.NewReader(bts))
 
 	return HTTPRequest{
 		Method:           rq.Method,
@@ -98,11 +97,12 @@ type HTTPResponse struct {
 	Json       bool
 	Raw        bool
 	RawBody    string
+	Header     http.Header
 }
 
 func makePluginHTTPHandler(pluginName string, group *gin.RouterGroup, dbPath string) {
 	pluginGroup := group.Group(fmt.Sprintf("/%s", pluginName))
-	pluginGroup.Any("", func(c *gin.Context) {
+	pluginGroup.Any("*t", func(c *gin.Context) {
 		//Call plugin http handler
 		pluginExec := "./plugins/" + pluginName + "/" + pluginName
 		if runtime.GOOS == "windows" {
@@ -120,6 +120,12 @@ func makePluginHTTPHandler(pluginName string, group *gin.RouterGroup, dbPath str
 		if err := client.Call(pluginName+".HandleHTTP", MakeRequest(c.Request, dbPath), &rsp); err != nil {
 			c.String(400, err.Error())
 			return
+		}
+
+		for key, value := range rsp.Header {
+			for _, vv := range value {
+				c.Header(key, vv)
+			}
 		}
 
 		if rsp.Json {
@@ -158,16 +164,16 @@ func loadPlugin(pluginName string, baseTemplate *template.Template, group *gin.R
 	makePluginHTTPHandler(pluginName, group, dbPath)
 
 	//load templates
-	if _, err := os.Stat(fmt.Sprintf("./plugins/%s/_templates", pluginName)); err == nil {
-		if _, err := baseTemplate.ParseGlob(fmt.Sprintf("./plugins/%s/_templates/*", pluginName)); err != nil {
-			log.Printf("%s plugin, %s", pluginName, err.Error())
-		}
-	}
-
-	//load assets
-	if _, err := os.Stat(fmt.Sprintf("./plugins/%s/_assets", pluginName)); err == nil {
-		group.Static(fmt.Sprintf("%s/assets/", pluginName), fmt.Sprintf("./plugins/%s/_assets", pluginName))
-	}
+	//if _, err := os.Stat(fmt.Sprintf("./plugins/%s/_templates", pluginName)); err == nil {
+	//	if _, err := baseTemplate.ParseGlob(fmt.Sprintf("./plugins/%s/_templates/*", pluginName)); err != nil {
+	//		log.Printf("%s plugin, %s", pluginName, err.Error())
+	//	}
+	//}
+	//
+	////load assets
+	//if _, err := os.Stat(fmt.Sprintf("./plugins/%s/_assets", pluginName)); err == nil {
+	//	group.Static(fmt.Sprintf("%s/assets/", pluginName), fmt.Sprintf("./plugins/%s/_assets", pluginName))
+	//}
 
 	var params Params
 	if err := client.Call(pluginName+".GetPluginParams", dbPath, &params); err != nil {

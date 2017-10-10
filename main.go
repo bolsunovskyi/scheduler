@@ -61,6 +61,8 @@ func initTemplate() (*template.Template, error) {
 }
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
+
 	db, err := gorm.Open("sqlite3", conf.DBPath)
 	if err != nil {
 		log.Fatalln(err)

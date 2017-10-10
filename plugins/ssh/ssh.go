@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/rpc/jsonrpc"
+	"os"
 	"strconv"
 	"strings"
 
@@ -39,10 +40,20 @@ func (s SSH) InitDB(dbPath string, _ *string) error {
 }
 
 func (s SSH) HandleHTTP(rq plugins.HTTPRequest, rsp *plugins.HTTPResponse) error {
-	hrq, err := http.NewRequest(rq.Method, rq.URL.Path, strings.NewReader(rq.BodyStr))
+	if s.db == nil {
+		db, err := gorm.Open("sqlite3", rq.DBPath)
+		if err != nil {
+			return err
+		}
+
+		s.db = db
+	}
+
+	hrq, err := http.NewRequest(rq.Method, rq.URL.Path+"?"+rq.URL.RawQuery, strings.NewReader(rq.BodyStr))
 	if err != nil {
 		return err
 	}
+	hrq.Header = rq.Header
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -50,14 +61,37 @@ func (s SSH) HandleHTTP(rq plugins.HTTPRequest, rsp *plugins.HTTPResponse) error
 		c.String(404, fmt.Sprintf("Path [%s] not found", c.Request.URL.Path))
 	})
 
-	s.router = r.Group("/a/plugins/ssh")
+	tpl, err := plugins.InitTemplate()
+	if err != nil {
+		return err
+	}
 
+	if _, err := tpl.ParseGlob("./_templates/**/*"); err != nil {
+		log.Fatalln(err)
+	}
+
+	if _, err := os.Stat("./plugins/ssh/_templates"); err == nil {
+		if _, err := tpl.ParseGlob("./plugins/ssh/_templates/*"); err != nil {
+			log.Fatalln(err)
+		}
+	}
+
+	//load assets
+	if _, err := os.Stat("./plugins/ssh/_assets"); err == nil {
+		r.Static("ssh/assets/", "./plugins/ssh/_assets")
+	}
+
+	r.SetHTMLTemplate(tpl)
+
+	s.router = r.Group("/a/plugins/ssh")
+	s.initHTTP()
 	rr := httptest.NewRecorder()
 
 	r.ServeHTTP(rr, hrq)
 
 	rsp.StatusCode = rr.Code
 	rsp.RawBody = rr.Body.String()
+	rsp.Header = rr.HeaderMap
 	rsp.Raw = true
 
 	return nil

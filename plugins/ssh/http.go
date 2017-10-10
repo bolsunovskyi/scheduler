@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -10,7 +9,7 @@ import (
 	vd "gopkg.in/go-playground/validator.v9"
 )
 
-func (s SSH) initHTTP() {
+func (s SSH) initHTTP() error {
 	s.router.GET("/", func(c *gin.Context) {
 		var creds []Credential
 		if err := s.db.Find(&creds).Error; err != nil {
@@ -20,16 +19,14 @@ func (s SSH) initHTTP() {
 			return
 		}
 
-		c.HTML(http.StatusOK, "ssh/index.html", gin.H{
-			"creds": creds,
-		})
+		c.HTML(http.StatusOK, "ssh/index.html", gin.H{"creds": creds})
 	})
 
 	s.router.GET("/credential/delete", func(c *gin.Context) {
 		if id := c.Query("id"); id != "" {
 			if n, err := strconv.Atoi(id); err == nil {
 				if err := s.db.Where("id = ?", n).Delete(&Credential{}).Error; err != nil {
-					log.Println(err)
+					c.String(500, err.Error())
 				}
 			}
 		}
@@ -73,7 +70,7 @@ func (s SSH) initHTTP() {
 		if id := c.Query("id"); id != "" {
 			if n, err := strconv.Atoi(id); err == nil {
 				if err := s.db.Where("id = ?", n).Delete(&Server{}).Error; err != nil {
-					log.Println(err)
+					c.String(500, err.Error())
 				}
 			}
 		}
@@ -176,4 +173,6 @@ func (s SSH) initHTTP() {
 
 		c.Redirect(http.StatusSeeOther, "/a/plugins/ssh/servers/")
 	})
+
+	return nil
 }

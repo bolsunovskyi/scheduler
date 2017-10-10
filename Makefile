@@ -11,7 +11,7 @@ scheduler: plugin
 plugin: clean
 	$(call blue, "Build plugins...")
 	go build -o plugins/ssh/ssh github.com/bolsunovskyi/scheduler/plugins/ssh
-	go build -o plugins/shell/shell.so github.com/bolsunovskyi/scheduler/plugins/shell
+	go build -o plugins/shell/shell github.com/bolsunovskyi/scheduler/plugins/shell
 
 clean:
 	$(call blue, "Clean work tree...")
