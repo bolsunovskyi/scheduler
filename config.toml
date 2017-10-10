@@ -1,6 +1,6 @@
 ## default config
 
-plugins = ["ssh", "shell"]
+plugins = ["shell", "ssh"]
 default_build_path = "/tmp/"
 db_path = "scheduler.db"
 

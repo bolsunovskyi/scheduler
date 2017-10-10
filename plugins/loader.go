@@ -38,12 +38,31 @@ type BuildStepOptions struct {
 }
 
 type Params struct {
-	Name        string
-	Description string
-	Version     string
-	HasSettings bool
-	BuildSteps  []BuildStep
+	Name          string
+	Description   string
+	Version       string
+	HasSettings   bool
+	BuildSteps    []BuildStep
+	GetBuildSteps func() ([]BuildStep, error)
 }
+
+//func (p Params) GetBuildSteps() ([]BuildStep, error) {
+//	pluginExec := "./plugins/" + p.Name + "/" + p.Name
+//	if runtime.GOOS == "windows" {
+//		pluginExec = pluginExec + ".exe"
+//	}
+//
+//	client, err := pie.StartProviderCodec(jsonrpc.NewClientCodec, os.Stdout, pluginExec)
+//	if err != nil {
+//		return nil, err
+//	}
+//	defer client.Close()
+//
+//	var params Params
+//	if err := client.Call(p.Name+".GetPluginParams", dbPath, &params); err != nil {
+//		return nil, err
+//	}
+//}
 
 type HTTPRequest struct {
 	DBPath           string
@@ -183,6 +202,26 @@ func loadPlugin(pluginName string, baseTemplate *template.Template, group *gin.R
 	log.Printf("Plugin name: %s\n", params.Name)
 	log.Printf("Plugin description: %s\n", params.Description)
 	log.Printf("Plugin version: %s\n", params.Version)
+
+	//params.GetBuildSteps = func() ([]BuildStep, error) {
+	//	pluginExec := "./plugins/" + pluginName + "/" + pluginName
+	//	if runtime.GOOS == "windows" {
+	//		pluginExec = pluginExec + ".exe"
+	//	}
+	//
+	//	client, err := pie.StartProviderCodec(jsonrpc.NewClientCodec, os.Stdout, pluginExec)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	defer client.Close()
+	//
+	//	var params Params
+	//	if err := client.Call(pluginName+".GetPluginParams", dbPath, &params); err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	return params.BuildSteps, nil
+	//}
 
 	return &params, nil
 }

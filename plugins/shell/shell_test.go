@@ -82,7 +82,7 @@ func TestShell_GetParams(t *testing.T) {
 	}
 	defer client.Close()
 
-	var params plugins.PluginParams
+	var params plugins.Params
 	if err := client.Call("shell.GetPluginParams", "", &params); err != nil {
 		t.Error(err)
 		return
@@ -92,13 +92,7 @@ func TestShell_GetParams(t *testing.T) {
 		return
 	}
 
-	var itemParam []plugins.PluginBuildParam
-	if err := client.Call("shell.GetBuildParams", "", &itemParam); err != nil {
-		t.Error(err)
-		return
-	}
-
-	if itemParam[0].Name != "command" {
+	if params.BuildSteps[0].Name != "command" {
 		t.Error("Wrong item param")
 		return
 	}

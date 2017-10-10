@@ -12,8 +12,11 @@ func makePluginSchemaHandler(loadedPlugins []plugins.Params) gin.HandlerFunc {
 		if pluginName := c.Param("name"); pluginName != "" {
 			for _, v := range loadedPlugins {
 				if v.Name == pluginName {
-					c.JSON(http.StatusOK, v.BuildSteps)
-					return
+					buildSteps, err := v.GetBuildSteps()
+					if err == nil {
+						c.JSON(http.StatusOK, buildSteps)
+						return
+					}
 				}
 			}
 		}
